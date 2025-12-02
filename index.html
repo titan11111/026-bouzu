@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>僧侶の相談ゲーム - 悟りの道 -</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -10,7 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        /* --- スタイル定義 --- */
+        /* --- 変数定義 --- */
         :root {
             --font-title: 'Yuji Syuku', serif;
             --font-body: 'Shippori Mincho', serif;
@@ -18,58 +18,82 @@
             --text-color: #3d3b38;
             --accent-color: #8e354a;
             --success-color: #5b7e91;
+            --shadow-color: rgba(61, 59, 56, 0.3);
+            --safe-area-bottom: env(safe-area-inset-bottom, 20px);
+        }
+
+        * {
+            box-sizing: border-box;
+            /* iOSでのタップハイライトを無効化 */
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             font-family: var(--font-body);
-            background-color: var(--bg-color);
-            background-image: url('haikeibutu.png'); 
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
             color: var(--text-color);
             min-height: 100vh;
+            /* スマホのアドレスバー対策 */
+            min-height: 100dvh;
             display: flex;
             justify-content: center;
             align-items: center;
             margin: 0;
             padding: 20px;
+            /* iOS用背景固定ハックの親要素 */
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* iOSで背景fixedが効かない問題への対策 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: var(--bg-color);
+            background-image: url('haikeibutu.png'); 
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.92);
+            background: rgba(255, 255, 255, 0.94);
             padding: 30px;
-            border-radius: 4px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-radius: 12px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
             border: 4px double var(--text-color);
             display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
+            grid-template-columns: 1fr 320px;
+            gap: 30px;
+            /* 少し高さを確保 */
+            align-items: start;
         }
 
         header {
             grid-column: 1 / -1;
             text-align: center;
             border-bottom: 2px solid var(--text-color);
-            margin-bottom: 20px;
-            padding-bottom: 10px;
+            margin-bottom: 10px;
+            padding-bottom: 15px;
             position: relative;
         }
 
         header h1 {
             font-family: var(--font-title);
-            font-size: 2.5em;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
             margin: 0;
             color: var(--accent-color);
             text-shadow: 2px 2px 0px rgba(255,255,255,0.8);
+            line-height: 1.2;
+        }
+
+        header p {
+            margin: 5px 0 0;
+            font-size: 0.9rem;
+            opacity: 0.8;
         }
 
         /* 音量ボタン */
@@ -77,50 +101,22 @@
             position: absolute;
             top: 0;
             right: 0;
-            background: none;
-            border: 1px solid var(--text-color);
+            background: #fff;
+            border: 2px solid var(--text-color);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 44px; /* タップしやすいサイズ */
+            height: 44px;
             cursor: pointer;
             font-size: 1.2em;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s;
+            transition: transform 0.1s, background 0.2s;
+            z-index: 10;
         }
-        .sound-control:hover {
-            background: var(--text-color);
-            color: #fff;
-        }
-
-        .monk-img {
-            display: block;
-            width: 160px;
-            height: auto;
-            margin: 0 auto 15px auto;
-            border-radius: 50%;
-            border: 4px solid var(--accent-color);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            object-fit: cover;
-            background: #fff;
-        }
-
-        .chart-container {
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid #ccc;
-            padding: 10px;
-            border-radius: 4px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .chart-title {
-            font-family: var(--font-title);
-            font-size: 1.2em;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #ccc;
+        .sound-control:active {
+            transform: scale(0.9);
+            background: var(--bg-color);
         }
 
         .game-area {
@@ -129,24 +125,47 @@
             gap: 20px;
         }
 
+        /* 和尚画像の修正 */
+        .monk-container {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .monk-img {
+            display: inline-block;
+            width: 140px;
+            max-width: 40%; /* スマホで大きくなりすぎないように */
+            height: auto;
+            border-radius: 50%;
+            border: 4px solid var(--accent-color);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            background: #fff;
+            object-fit: cover;
+        }
+
+        /* 相談カード */
         .consultation-card {
             background: #fff;
             border: 2px solid var(--text-color);
+            border-radius: 8px;
             padding: 20px;
             position: relative;
             margin-top: 10px;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.05);
         }
         
         .consultation-card::after {
             content: "問";
             position: absolute;
-            top: -15px;
-            left: 20px;
+            top: -14px;
+            left: 15px;
             background: var(--text-color);
             color: #fff;
-            padding: 2px 10px;
+            padding: 2px 12px;
+            border-radius: 12px;
             font-family: var(--font-title);
-            font-size: 1.2em;
+            font-size: 1rem;
+            font-weight: bold;
         }
 
         .visitor-info {
@@ -154,13 +173,13 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px dashed #ccc;
-            margin-bottom: 10px;
-            padding-bottom: 5px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
         }
 
         .visitor-name {
             font-weight: bold;
-            font-size: 1.2em;
+            font-size: 1.1em;
             color: var(--accent-color);
         }
 
@@ -168,61 +187,91 @@
             font-size: 0.9em;
             color: #666;
             font-family: var(--font-title);
+            background: #eee;
+            padding: 2px 8px;
+            border-radius: 4px;
         }
 
         .consultation-text {
             font-size: 1.1em;
             line-height: 1.8;
+            min-height: 3em; /* ガタつき防止 */
         }
 
+        /* --- ボタン打感の強化 --- */
         .advice-buttons {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 16px;
         }
 
-        .advice-btn {
+        .advice-btn, .next-btn, .start-btn {
             font-family: var(--font-body);
             background: #fff;
             color: var(--text-color);
-            border: 1px solid var(--text-color);
-            padding: 15px;
-            font-size: 1.1em;
+            border: 2px solid var(--text-color);
+            border-radius: 8px;
+            padding: 16px 20px 16px 45px; /* 左はアイコン分空ける */
+            font-size: 1rem;
+            font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
             position: relative;
             text-align: left;
-            padding-left: 40px;
+            user-select: none; /* テキスト選択防止 */
+            touch-action: manipulation; /* ダブルタップズーム防止 */
+            
+            /* 立体感の演出 */
+            box-shadow: 0 4px 0 var(--text-color); 
+            transform: translateY(0);
+            transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.1s;
         }
 
         .advice-btn::before {
             content: "◆";
             position: absolute;
             left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
             color: var(--accent-color);
+            font-size: 0.8em;
+            transition: color 0.2s;
         }
 
-        .advice-btn:hover {
-            background: #fff8f8;
-            transform: translateX(5px);
-            border-color: var(--accent-color);
+        /* 押した時の挙動 (Active) */
+        .advice-btn:active, .next-btn:active, .start-btn:active {
+            transform: translateY(4px); /* 沈み込む */
+            box-shadow: 0 0 0 var(--text-color); /* 影を消す */
+            background-color: #fdfdf0;
         }
 
+        /* PCのみホバー効果 */
+        @media (hover: hover) {
+            .advice-btn:hover {
+                background: #fff8f8;
+            }
+            .advice-btn:hover::before {
+                color: var(--text-color);
+            }
+        }
+
+        /* 結果表示 */
         .result {
             padding: 20px;
             border: 2px solid var(--accent-color);
+            border-radius: 8px;
             background: #fff0f0;
             display: block;
-            animation: fadeIn 0.5s ease;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-top: 10px;
+        }
+        
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
         
         .result.hidden {
             display: none !important;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
         
         .result.success {
@@ -232,47 +281,134 @@
 
         .result-text {
             font-family: var(--font-title);
-            font-size: 1.5em;
+            font-size: 1.4em;
             margin-bottom: 10px;
             color: var(--accent-color);
+            font-weight: bold;
         }
         
         .result.success .result-text {
             color: var(--success-color);
         }
 
+        /* 次へボタン */
         .next-btn {
-            margin-top: 15px;
-            padding: 10px 30px;
+            margin-top: 20px;
+            text-align: center;
             background: var(--text-color);
             color: #fff;
-            border: none;
-            font-family: var(--font-title);
-            font-size: 1.2em;
-            cursor: pointer;
+            padding: 15px;
             width: 100%;
+            box-shadow: 0 4px 0 #1a1918; /* 少し濃い影 */
         }
-        
-        .next-btn:hover {
-            opacity: 0.9;
+        .next-btn:active {
+            box-shadow: 0 0 0 #1a1918;
+            background: #555;
         }
 
+        /* チャートエリア */
+        .chart-container {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: fit-content;
+        }
+        
+        .chart-title {
+            font-family: var(--font-title);
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #eee;
+            width: 100%;
+            text-align: center;
+            padding-bottom: 5px;
+        }
+
+        /* スタート画面 */
         #start-overlay {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(4px);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            padding: 20px;
         }
         .start-content {
             background: #fff;
-            padding: 40px;
+            padding: 40px 30px;
             text-align: center;
-            border-radius: 8px;
+            border-radius: 12px;
             max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border: 4px double var(--accent-color);
+        }
+        .start-btn {
+            background: var(--accent-color);
+            color: #fff;
+            border-color: #6d2939;
+            box-shadow: 0 4px 0 #6d2939;
+            width: 100%;
+            text-align: center;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .start-btn:active {
+            box-shadow: 0 0 0 #6d2939;
+            background: #7a2d40;
+        }
+
+        /* --- スマホ向けレスポンシブ設定 --- */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+                /* 上部のアドレスバー分を考慮 */
+                padding-top: max(10px, env(safe-area-inset-top)); 
+                padding-bottom: var(--safe-area-bottom);
+                align-items: flex-start; /* 縦長コンテンツ対応 */
+            }
+
+            .container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px 15px;
+                margin-bottom: var(--safe-area-bottom);
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .sound-control {
+                width: 36px;
+                height: 36px;
+                font-size: 1em;
+                top: -10px;
+                right: -5px;
+            }
+
+            /* スマホでは和尚を少し小さく */
+            .monk-img {
+                width: 120px;
+            }
+
+            /* チャートを下に配置する際のマージン */
+            .chart-container {
+                margin-top: 10px;
+            }
+
+            .advice-btn {
+                padding: 14px 15px 14px 35px; /* スマホ用に余白調整 */
+                font-size: 0.95em;
+            }
         }
     </style>
 </head>
@@ -283,9 +419,9 @@
 
     <div id="start-overlay">
         <div class="start-content">
-            <h1 style="font-family: var(--font-title); margin-bottom: 20px;">僧侶の相談部屋</h1>
-            <p>心を落ち着け、迷える者たちを導くのです。<br>（全10問の修行となります）</p>
-            <button class="next-btn" onclick="startGame()">修行開始</button>
+            <h1 style="font-family: var(--font-title); margin-bottom: 20px; color: var(--accent-color);">僧侶の相談部屋</h1>
+            <p style="line-height: 1.8;">心を落ち着け、<br>迷える者たちを導くのです。<br>（全10問の修行となります）</p>
+            <button class="start-btn" onclick="startGame()">修行開始</button>
         </div>
     </div>
 
@@ -293,11 +429,13 @@
         <header>
             <h1>🙏 僧侶の相談部屋 🙏</h1>
             <p>己を見つめて、パラメーターを磨くのです</p>
-            <button class="sound-control" onclick="toggleSound()" title="音楽ON/OFF">♪</button>
+            <button class="sound-control" onclick="toggleSound()" aria-label="音楽ON/OFF">♪</button>
         </header>
 
         <div class="game-area">
-            <img src="images/osyou.png" alt="和尚" class="monk-img">
+            <div class="monk-container">
+                <img src="images/osyou.png" alt="和尚" class="monk-img">
+            </div>
 
             <div id="consultation-card" class="consultation-card">
                 <div class="visitor-info">
@@ -310,27 +448,29 @@
             </div>
 
             <div id="advice-buttons" class="advice-buttons">
-            </div>
+                </div>
 
             <div id="result" class="result hidden">
                 <div class="result-text" id="result-text"></div>
-                <div class="result-message" id="result-message"></div>
+                <div class="result-message" id="result-message" style="line-height:1.6; margin-bottom:10px;"></div>
                 <button class="next-btn" onclick="nextConsultation()">次へ進む</button>
             </div>
         </div>
 
         <div class="chart-container">
             <div class="chart-title">現在の魂の状態</div>
-            <canvas id="soulChart"></canvas>
-            <div style="margin-top: 20px; font-size: 0.9em; text-align: center;">
-                <p>※ 上が徳、下が業</p>
-                <p>正しき道は三角形を上へ導く</p>
+            <div style="position: relative; width: 100%; max-width: 300px;">
+                <canvas id="soulChart"></canvas>
+            </div>
+            <div style="margin-top: 15px; font-size: 0.85em; text-align: center; color: #666;">
+                <p style="margin:2px 0;">※ 上が徳、下が業</p>
+                <p style="margin:2px 0;">正しき道は三角形を上へ導く</p>
             </div>
         </div>
     </div>
 
     <script>
-        // --- 相談データ（60人分に拡張） ---
+        // --- 相談データ（60人分） ---
         const consultations = [
             { name: "田中殿（会社員）", problem: "仕事の重圧に耐え難く、毎日が辛うございます。", advice: ["無人島へ逃げなされ", "深呼吸し、今を見つめなされ", "上司に説法なされ"], correct: 1, message: "「心が軽くなりました」", failMessage: "「無人島…？ Wi-Fiはあるのですか？」" },
             { name: "猫又（野良猫）", problem: "縄張りを巡り、他の猫と争いが絶えぬ。", advice: ["共存の道を探すがよい", "力で追い出しなされ", "共に喧嘩なされ"], correct: 0, message: "「平和の道を探してみるニャ」", failMessage: "「それでは解決にならぬニャ…」" },
@@ -362,7 +502,6 @@
             { name: "おじさん（妖精）", problem: "「小さいおじさん」として見つかった時のリアクションに困る。", advice: ["ウィンクしなされ", "死んだふりをしなされ", "幸せを授けなされ"], correct: 2, message: "「都市伝説として語り継がれます」", failMessage: "「気持ち悪いと踏まれました」" },
             { name: "月", problem: "太陽が眩しすぎて、自分の輝きが見えません。", advice: ["夜こそお主の出番じゃ", "日食で隠してしまえ", "サングラスをかけなされ"], correct: 0, message: "「闇夜を照らす喜びに気づきました」", failMessage: "「世界が闇に包まれました」" },
             { name: "ゲーム開発者", problem: "面白いシナリオが思いつきません。どうすれば？", advice: ["寝て夢を見なされ", "バグを仕様と言い張れ", "ＡＩに頼りなされ"], correct: 2, message: "「素晴らしい案が出ました（これです）」", failMessage: "「クソゲーが爆誕しました」" },
-            // --- ここから追加分30人 ---
             { name: "冷蔵庫のプリン", problem: "持ち主が私の名前を書かずに放置しています。食べられてしまう！", advice: ["早く腐りなされ", "自ら皿に乗りなされ", "表面を硬くしなされ"], correct: 2, message: "「カピカピになって身を守りました」", failMessage: "「無慈悲に食べられました…」" },
             { name: "エナドリ中毒の勇者", problem: "カフェインが切れると魔王が2人に見えます。", advice: ["寝なされ", "3人に見えるまで飲みなされ", "魔王にも飲ませなされ"], correct: 0, message: "「久々に熟睡し、世界が平和に見えます」", failMessage: "「心臓が早鐘を打っております！」" },
             { name: "盆栽（松）", problem: "ご主人のハサミ使いが下手すぎて、変な髪型にされました。", advice: ["あるがままを受け入れよ", "枝を伸ばして刺しなされ", "枯れたフリをしなされ"], correct: 0, message: "「アバンギャルドな芸術として生きることにしました」", failMessage: "「薪にされました…」" },
@@ -399,15 +538,15 @@
         let usedIndices = [];
         let currentData = null;
         let playCount = 0;
-        const MAX_PLAY_COUNT = 10; // ★10問に変更
+        const MAX_PLAY_COUNT = 10;
         
         let stats = {
-            toku: 50,  // 徳
-            satori: 50,// 悟
-            nin: 50,   // 忍
-            ton: 50,   // 貪
-            jin: 50,   // 瞋
-            chi: 50    // 痴
+            toku: 50,
+            satori: 50,
+            nin: 50,
+            ton: 50,
+            jin: 50,
+            chi: 50
         };
 
         window.onload = function() {
@@ -418,6 +557,7 @@
             document.getElementById('start-overlay').style.display = 'none';
             const bgm = document.getElementById('bgm');
             bgm.volume = 0.5;
+            // ユーザー操作後なので再生可能
             bgm.play().catch(e => console.log("再生エラー:", e));
             showConsultation();
         }
@@ -443,17 +583,20 @@
                         backgroundColor: 'rgba(142, 53, 74, 0.4)',
                         borderColor: 'rgba(142, 53, 74, 1)',
                         borderWidth: 2,
-                        pointBackgroundColor: '#fff'
+                        pointBackgroundColor: '#fff',
+                        pointRadius: 3 // スマホで見やすいように少し大きく
                     }]
                 },
                 options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // コンテナに合わせる
                     scales: {
                         r: {
                             min: 0,
                             max: 100,
                             ticks: { display: false },
                             pointLabels: {
-                                font: { family: "'Yuji Syuku', serif", size: 14 },
+                                font: { family: "'Yuji Syuku', serif", size: 13 },
                                 color: '#3d3b38'
                             },
                             grid: { color: 'rgba(0,0,0,0.1)' }
@@ -506,6 +649,8 @@
                 const btn = document.createElement('button');
                 btn.className = 'advice-btn';
                 btn.textContent = choice.text;
+                
+                // タップ時の遅延をなくすためのTouchイベント対応はCSS(touch-action)で処理
                 btn.onclick = () => checkAnswer(choice.originalIndex);
                 btnArea.appendChild(btn);
             });
@@ -514,6 +659,11 @@
             resultDiv.classList.add('hidden');
             resultDiv.className = 'result hidden';
             btnArea.style.display = 'flex';
+            
+            // 画面トップへ少しスクロール（スマホ対策）
+            if(window.innerWidth <= 768 && playCount > 0){
+                document.querySelector('.container').scrollIntoView({behavior: 'smooth', block: 'start'});
+            }
         }
 
         function checkAnswer(originalIndex) {
@@ -572,16 +722,14 @@
         }
 
         function endGame() {
-            // スコア計算：善行の合計 - 悪徳の合計
-            let sumGood = stats.toku + stats.satori + stats.nin; // 最大300
-            let sumBad = stats.ton + stats.jin + stats.chi;     // 最大300
-            let diff = sumGood - sumBad; // 範囲 -300 ～ +300 (初期値50相殺で変動幅は実質±200程度)
+            let sumGood = stats.toku + stats.satori + stats.nin;
+            let sumBad = stats.ton + stats.jin + stats.chi;
+            let diff = sumGood - sumBad;
 
             let rankTitle = "";
             let rankMsg = "";
-            let rankClass = "success"; // success または failure で色分け
+            let rankClass = "success";
 
-            // --- 10段階評価ロジック ---
             if (diff >= 200) {
                 rankTitle = "【 評価：解脱・如来級 】";
                 rankMsg = "もはや人ではありません。後光が差しております。あなたの言葉は世界を救うでしょう。";
@@ -622,10 +770,10 @@
             const resultColor = (rankClass === 'success') ? 'var(--success-color)' : 'var(--accent-color)';
 
             document.querySelector('.game-area').innerHTML = 
-                `<div style="text-align:center; padding:30px; animation: fadeIn 1s ease;">
-                    <h2 style="font-family:var(--font-title); color:${resultColor}; font-size:1.8em; margin-bottom:10px;">～ 修行終了 ～</h2>
-                    <h3 style="font-size:1.4em; margin-bottom:20px; color:${resultColor}; border-bottom:2px solid ${resultColor}; display:inline-block; padding-bottom:5px;">${rankTitle}</h3>
-                    <p style="font-size:1.2em; margin:20px 0; line-height:1.8;">${rankMsg}</p>
+                `<div style="text-align:center; padding:20px; animation: fadeIn 1s ease;">
+                    <h2 style="font-family:var(--font-title); color:${resultColor}; font-size:1.6em; margin-bottom:10px;">～ 修行終了 ～</h2>
+                    <h3 style="font-size:1.3em; margin-bottom:20px; color:${resultColor}; border-bottom:2px solid ${resultColor}; display:inline-block; padding-bottom:5px;">${rankTitle}</h3>
+                    <p style="font-size:1.1em; margin:20px 0; line-height:1.8;">${rankMsg}</p>
                     
                     <div style="background:rgba(255,255,255,0.6); padding:15px; border-radius:8px; margin:20px 0;">
                         <p>善行値：${sumGood}</p>
