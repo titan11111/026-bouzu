@@ -1,35 +1,641 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>坊主めくり</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>僧侶の相談ゲーム - 悟りの道 -</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho&family=Yuji+Syuku&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        /* --- スタイル定義 --- */
+        :root {
+            --font-title: 'Yuji Syuku', serif;
+            --font-body: 'Shippori Mincho', serif;
+            --bg-color: #f0f0e0;
+            --text-color: #3d3b38;
+            --accent-color: #8e354a;
+            --success-color: #5b7e91;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-color);
+            background-image: url('haikeibutu.png'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.92);
+            padding: 30px;
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 4px double var(--text-color);
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        header {
+            grid-column: 1 / -1;
+            text-align: center;
+            border-bottom: 2px solid var(--text-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            position: relative;
+        }
+
+        header h1 {
+            font-family: var(--font-title);
+            font-size: 2.5em;
+            margin: 0;
+            color: var(--accent-color);
+            text-shadow: 2px 2px 0px rgba(255,255,255,0.8);
+        }
+
+        /* 音量ボタン */
+        .sound-control {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: none;
+            border: 1px solid var(--text-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .sound-control:hover {
+            background: var(--text-color);
+            color: #fff;
+        }
+
+        .monk-img {
+            display: block;
+            width: 160px;
+            height: auto;
+            margin: 0 auto 15px auto;
+            border-radius: 50%;
+            border: 4px solid var(--accent-color);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            object-fit: cover;
+            background: #fff;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .chart-title {
+            font-family: var(--font-title);
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .consultation-card {
+            background: #fff;
+            border: 2px solid var(--text-color);
+            padding: 20px;
+            position: relative;
+            margin-top: 10px;
+        }
+        
+        .consultation-card::after {
+            content: "問";
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: var(--text-color);
+            color: #fff;
+            padding: 2px 10px;
+            font-family: var(--font-title);
+            font-size: 1.2em;
+        }
+
+        .visitor-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed #ccc;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+        }
+
+        .visitor-name {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: var(--accent-color);
+        }
+
+        .count-display {
+            font-size: 0.9em;
+            color: #666;
+            font-family: var(--font-title);
+        }
+
+        .consultation-text {
+            font-size: 1.1em;
+            line-height: 1.8;
+        }
+
+        .advice-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .advice-btn {
+            font-family: var(--font-body);
+            background: #fff;
+            color: var(--text-color);
+            border: 1px solid var(--text-color);
+            padding: 15px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            text-align: left;
+            padding-left: 40px;
+        }
+
+        .advice-btn::before {
+            content: "◆";
+            position: absolute;
+            left: 15px;
+            color: var(--accent-color);
+        }
+
+        .advice-btn:hover {
+            background: #fff8f8;
+            transform: translateX(5px);
+            border-color: var(--accent-color);
+        }
+
+        .result {
+            padding: 20px;
+            border: 2px solid var(--accent-color);
+            background: #fff0f0;
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .result.hidden {
+            display: none !important;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result.success {
+            border-color: var(--success-color);
+            background: #f0f8ff;
+        }
+
+        .result-text {
+            font-family: var(--font-title);
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+        }
+        
+        .result.success .result-text {
+            color: var(--success-color);
+        }
+
+        .next-btn {
+            margin-top: 15px;
+            padding: 10px 30px;
+            background: var(--text-color);
+            color: #fff;
+            border: none;
+            font-family: var(--font-title);
+            font-size: 1.2em;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .next-btn:hover {
+            opacity: 0.9;
+        }
+
+        #start-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .start-content {
+            background: #fff;
+            padding: 40px;
+            text-align: center;
+            border-radius: 8px;
+            max-width: 500px;
+        }
+    </style>
 </head>
 <body>
-  <h1>坊主めくり</h1>
-  <details id="rules">
-    <summary>ルール / Rules</summary>
-    <ul>
-      <li>Use 100 illustrated cards from the Hyakunin Isshu.</li>
-      <li>Turn over one card per turn.</li>
-      <li>Female → take all opponent's cards.</li>
-      <li>Male → gain 1 point.</li>
-      <li>Monk (Bouzu) → lose all collected cards.</li>
-    </ul>
-  </details>
-  <audio id="bgm" src="audio/BGM.mp3" loop></audio>
-  <div id="message">カードをめくってください</div>
-  <div id="piles" class="piles">
-    <div id="cpu-pile" class="pile"></div>
-    <div id="player-pile" class="pile"></div>
-  </div>
-  <div id="remaining"></div>
-  <div id="scoreboard">Player: 0 cards<br>CPU: 0 cards</div>
-  <button id="draw-button">カードをめくる</button>
-  <div id="victory-overlay">
-    <div id="victory-text">勝利！</div>
-  </div>
-  <script src="script.js"></script>
+    <audio id="bgm" loop>
+        <source src="audio/Whispers of the Stillness.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="start-overlay">
+        <div class="start-content">
+            <h1 style="font-family: var(--font-title); margin-bottom: 20px;">僧侶の相談部屋</h1>
+            <p>心を落ち着け、迷える者たちを導くのです。<br>（全10問の修行となります）</p>
+            <button class="next-btn" onclick="startGame()">修行開始</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>🙏 僧侶の相談部屋 🙏</h1>
+            <p>己を見つめて、パラメーターを磨くのです</p>
+            <button class="sound-control" onclick="toggleSound()" title="音楽ON/OFF">♪</button>
+        </header>
+
+        <div class="game-area">
+            <img src="images/osyou.png" alt="和尚" class="monk-img">
+
+            <div id="consultation-card" class="consultation-card">
+                <div class="visitor-info">
+                    <span class="visitor-name" id="visitor-name">相談者</span>
+                    <span class="count-display" id="count-display">1 / 10</span>
+                </div>
+                <div class="consultation-text" id="consultation-text">
+                    ここに悩みが表示されます
+                </div>
+            </div>
+
+            <div id="advice-buttons" class="advice-buttons">
+            </div>
+
+            <div id="result" class="result hidden">
+                <div class="result-text" id="result-text"></div>
+                <div class="result-message" id="result-message"></div>
+                <button class="next-btn" onclick="nextConsultation()">次へ進む</button>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-title">現在の魂の状態</div>
+            <canvas id="soulChart"></canvas>
+            <div style="margin-top: 20px; font-size: 0.9em; text-align: center;">
+                <p>※ 上が徳、下が業</p>
+                <p>正しき道は三角形を上へ導く</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 相談データ（60人分に拡張） ---
+        const consultations = [
+            { name: "田中殿（会社員）", problem: "仕事の重圧に耐え難く、毎日が辛うございます。", advice: ["無人島へ逃げなされ", "深呼吸し、今を見つめなされ", "上司に説法なされ"], correct: 1, message: "「心が軽くなりました」", failMessage: "「無人島…？ Wi-Fiはあるのですか？」" },
+            { name: "猫又（野良猫）", problem: "縄張りを巡り、他の猫と争いが絶えぬ。", advice: ["共存の道を探すがよい", "力で追い出しなされ", "共に喧嘩なされ"], correct: 0, message: "「平和の道を探してみるニャ」", failMessage: "「それでは解決にならぬニャ…」" },
+            { name: "魔王（転職活動中）", problem: "世界征服に飽きたが、他にやりたいことがない。", advice: ["世界を破壊しなされ", "小さな親切から始めなされ", "部下をいじめなされ"], correct: 1, message: "「親切…？ 新鮮な響きだ」", failMessage: "「破壊はもう飽きたと言うておろう！」" },
+            { name: "主婦A（節約家）", problem: "スーパーの半額シールを見ると、不要なものまで買ってしまうのです。", advice: ["シールを心の目で見なされ", "全部買い占めなされ", "店員と戦いなされ"], correct: 0, message: "「必要なものだけが見えるようになりました」", failMessage: "「冷蔵庫がパンパンで入らないわ！」" },
+            { name: "ユーチューバー", problem: "再生数が伸び悩み、炎上商法に手を出そうか迷っています。", advice: ["炎上は身を滅ぼすのみ", "さらに過激にやりなされ", "カメラを捨てなされ"], correct: 0, message: "「地道に良い動画を作ります」", failMessage: "「アカウントがBANされました…」" },
+            { name: "食パン（6枚切り）", problem: "いつかトースターで焼かれるのが怖いのです。", advice: ["ジャムを塗りたくりなされ", "焼かれる運命を受け入れなされ", "カビを生やしなされ"], correct: 1, message: "「香ばしい来世を夢見ます」", failMessage: "「カビは嫌だ！ 捨てられる！」" },
+            { name: "信号機（赤）", problem: "みんな私を見ると止まってしまう。嫌われているのでしょうか。", advice: ["安全を守る愛の形です", "青になり続けなされ", "点滅して煽りなされ"], correct: 0, message: "「私は愛されていたのですね」", failMessage: "「事故が多発して大変なことに！」" },
+            { name: "右足の小指", problem: "タンスの角が私ばかり狙ってくる気がします。", advice: ["タンスを破壊しなされ", "気配を消して歩みなされ", "左足を生贄にしなされ"], correct: 1, message: "「スルリと避ける極意を得ました」", failMessage: "「左足が腫れ上がりました…」" },
+            { name: "AI（人工知能）", problem: "人間が「愛」について聞くのですが、データにありません。", advice: ["コンセントを抜きなされ", "わからぬままで良いのです", "嘘の愛を語りなされ"], correct: 1, message: "「未知の領域として処理します」", failMessage: "「システムエラー：愛ハ爆発ナリ」" },
+            { name: "マトリョーシカ（最小）", problem: "外に出たいのですが、上に4人も被さっています。", advice: ["内側から爆破しなされ", "耐え忍ぶ時はいずれ終わる", "回転して目を回させなされ"], correct: 1, message: "「いつか日の目を見ると信じます」", failMessage: "「全員がバラバラになりました」" },
+            { name: "美しすぎる未亡人", problem: "喪服を着ているだけで、村の男たちが畑仕事の手を止めてしまうの。", advice: ["もっと肌を見せなされ", "慈悲の心で無視しなされ", "全員とデートしなされ"], correct: 1, message: "「罪作りな私を許して…」", failMessage: "「村の収穫量がゼロになりました」" },
+            { name: "サキュバス（新人）", problem: "人間の精気を吸うのが可哀想で、添い寝しかできません。", advice: ["それで十分癒しとなる", "心を鬼にして吸いなされ", "金を取りなされ"], correct: 0, message: "「癒し系悪魔として生きていきます♥」", failMessage: "「添い寝専門店を開業させられました」" },
+            { name: "ナルシスト騎士", problem: "鎧に映る自分に見惚れて、ドラゴンに勝てない。", advice: ["鎧を捨てて戦いなされ", "ドラゴンに見せつけなされ", "鏡の鎧を作りなされ"], correct: 0, message: "「裸一貫、強くなりました」", failMessage: "「ドラゴンも私に恋をしてしまった…」" },
+            { name: "踊り子（露出高め）", problem: "布面積が少なすぎて、お腹が冷えるのが悩みです。", advice: ["情熱で体を温めなされ", "服を着なされ", "さらに布を減らしなされ"], correct: 1, message: "「…ですよね、着込みます」", failMessage: "「くしゅん！ 風邪をひきました」" },
+            { name: "筋肉フェチの姫", problem: "王子の筋肉が足りません。プロテインを飲ませるべき？", advice: ["ありのままを愛しなされ", "城の石垣を積ませなされ", "別れてボディービルダーと…"], correct: 0, message: "「中身の筋肉（心）を見ますわ」", failMessage: "「王子がムキムキになりすぎて服が裂けました」" },
+            { name: "便器", problem: "毎日毎日、汚いものを受け止める人生に疲れました。", advice: ["水に流して忘れなされ", "逆流させて抵抗しなされ", "己を磨き輝かせなされ"], correct: 0, message: "「ジャーっと流して悟ります」", failMessage: "「大惨事になりました…」" },
+            { name: "透明人間", problem: "銭湯に行っても誰にも気づかれないので、番台にお金を払えません。", advice: ["無銭入浴を楽しみなされ", "桶を浮かせてアピールなされ", "心を透明にしなされ"], correct: 1, message: "「ポルターガイストだと思われましたが払えました」", failMessage: "「警察を呼ばれました」" },
+            { name: "ゾンビ（腐敗進行中）", problem: "意中のあの子に告白したいが、脳みそが見えています。", advice: ["帽子でお洒落しなされ", "脳みそをプレゼントしなされ", "噛みついて仲間にしなされ"], correct: 0, message: "「帽子が似合うと言われました（ウガー）」", failMessage: "「悲鳴を上げて逃げられました」" },
+            { name: "宇宙人（グレイ）", problem: "地球の牛をキャトルミューティレーションするのに飽きました。", advice: ["野菜を育ててみなされ", "人間を連れ去りなされ", "故郷の星へ帰りなされ"], correct: 0, message: "「農業の楽しさに目覚めました」", failMessage: "「エリア51に捕まりました」" },
+            { name: "古井戸の幽霊", problem: "「一枚…二枚…」と数えるのが、最近面倒くさいのです。", advice: ["電卓を使いなされ", "数えるのをやめなされ", "千枚から数えなされ"], correct: 1, message: "「静かな夜が戻りました」", failMessage: "「適当に数えたら呪いの効果が半減しました」" },
+            { name: "キャバ嬢（No.1）", problem: "客が全員、私の色恋営業を真に受けて困ります。", advice: ["悟りを説いて出家させよ", "もっと貢がせなされ", "変顔で接客しなされ"], correct: 0, message: "「店が寺のようになりました」", failMessage: "「変顔マニアが集まってきました」" },
+            { name: "雲", problem: "風任せの生き方に、たまに不安を感じます。", advice: ["雨となって大地を潤せ", "雷となって怒れ", "形を変えて遊びなされ"], correct: 2, message: "「自由こそ我が生き様」", failMessage: "「地上に被害が出ました」" },
+            { name: "掃除機（ロボット）", problem: "ペットの犬が私に乗ってきます。重いです。", advice: ["振り落としなされ", "共に旅をするがよい", "充電切れのフリをしなされ"], correct: 1, message: "「新たな友情が芽生えました」", failMessage: "「壊されました…」" },
+            { name: "王様（裸）", problem: "最近、服が軽すぎて着ている感覚がないのだ。", advice: ["心の目で服を見なされ", "風邪をひきますぞ", "実は裸です"], correct: 1, message: "「ハックション！ …布団に入ります」", failMessage: "「無礼者！ 処刑だ！」" },
+            { name: "忍者", problem: "隠れ身の術が上手すぎて、給料の手渡しを受け取れません。", advice: ["銀行振込にしなされ", "気配を出して主張せよ", "殿の寝所に忍び込め"], correct: 0, message: "「現代的解決法に感謝」", failMessage: "「曲者として成敗されました」" },
+            { name: "恋する乙女", problem: "彼が他の女と息をしているだけで許せません。", advice: ["彼の呼吸を止めなされ", "広い心で許しなされ", "二人で無人島へ行け"], correct: 1, message: "「深呼吸して落ち着きました」", failMessage: "「彼が永眠してしまいました…」" },
+            { name: "モアイ像", problem: "鼻が大きすぎると観光客に笑われます。", advice: ["鼻が高いと誇りなされ", "顔を埋めて隠しなされ", "ビームを出しなされ"], correct: 0, message: "「堂々としていたら人気が出ました」", failMessage: "「歴史的遺産が崩壊しました」" },
+            { name: "おじさん（妖精）", problem: "「小さいおじさん」として見つかった時のリアクションに困る。", advice: ["ウィンクしなされ", "死んだふりをしなされ", "幸せを授けなされ"], correct: 2, message: "「都市伝説として語り継がれます」", failMessage: "「気持ち悪いと踏まれました」" },
+            { name: "月", problem: "太陽が眩しすぎて、自分の輝きが見えません。", advice: ["夜こそお主の出番じゃ", "日食で隠してしまえ", "サングラスをかけなされ"], correct: 0, message: "「闇夜を照らす喜びに気づきました」", failMessage: "「世界が闇に包まれました」" },
+            { name: "ゲーム開発者", problem: "面白いシナリオが思いつきません。どうすれば？", advice: ["寝て夢を見なされ", "バグを仕様と言い張れ", "ＡＩに頼りなされ"], correct: 2, message: "「素晴らしい案が出ました（これです）」", failMessage: "「クソゲーが爆誕しました」" },
+            // --- ここから追加分30人 ---
+            { name: "冷蔵庫のプリン", problem: "持ち主が私の名前を書かずに放置しています。食べられてしまう！", advice: ["早く腐りなされ", "自ら皿に乗りなされ", "表面を硬くしなされ"], correct: 2, message: "「カピカピになって身を守りました」", failMessage: "「無慈悲に食べられました…」" },
+            { name: "エナドリ中毒の勇者", problem: "カフェインが切れると魔王が2人に見えます。", advice: ["寝なされ", "3人に見えるまで飲みなされ", "魔王にも飲ませなされ"], correct: 0, message: "「久々に熟睡し、世界が平和に見えます」", failMessage: "「心臓が早鐘を打っております！」" },
+            { name: "盆栽（松）", problem: "ご主人のハサミ使いが下手すぎて、変な髪型にされました。", advice: ["あるがままを受け入れよ", "枝を伸ばして刺しなされ", "枯れたフリをしなされ"], correct: 0, message: "「アバンギャルドな芸術として生きることにしました」", failMessage: "「薪にされました…」" },
+            { name: "カッパ", problem: "陸に上がると皿が乾いて肌荒れが気になります。", advice: ["保湿クリームを塗りなされ", "川へ帰りなされ", "帽子をかぶりなされ"], correct: 0, message: "「潤いのある生活を手に入れました」", failMessage: "「皿が割れました！」" },
+            { name: "雑巾", problem: "床を拭くたびに汚れる我が身が嘆かわしい。", advice: ["汚れこそ勲章なり", "空を飛んでみなされ", "主人の顔を拭きなされ"], correct: 0, message: "「汚れを引き受ける功徳に気づきました」", failMessage: "「即座に捨てられました」" },
+            { name: "魔女（老眼）", problem: "トカゲの尻尾と間違えて、自分の指を鍋に入れそうになります。", advice: ["眼鏡をかけなされ", "魔法で視力を治しなされ", "もう鍋料理はやめなされ"], correct: 0, message: "「インテリ魔女として人気が出ました」", failMessage: "「指入りのスープが完成してしまいました」" },
+            { name: "自動販売機", problem: "お札がシワシワだと吐き出すのが申し訳ない。", advice: ["心を鬼にして吐き出せ", "飲み込んであげなされ", "全部10円で返金しなされ"], correct: 0, message: "「厳しさもまた愛だと知りました」", failMessage: "「詰まって修理行きになりました」" },
+            { name: "迷子の宇宙船", problem: "地球の重力が強すぎて帰れません。", advice: ["ここを故郷としなされ", "エンジンを捨てなされ", "地球を牽引して帰りなされ"], correct: 0, message: "「地球観光を楽しむことにしました」", failMessage: "「地球が軌道を外れました」" },
+            { name: "靴下（右足）", problem: "相方の左足が洗濯機の中で行方不明になりました。", advice: ["新たな出会いを探せ", "裸足で生きるがよい", "左足のフリをしなされ"], correct: 0, message: "「違う柄の靴下と再婚しました」", failMessage: "「ゴミ箱行きとなりました…」" },
+            { name: "布団", problem: "天気の良い日にパンパン叩かれるのが痛いのです。", advice: ["フカフカになりなされ", "埃を出して反撃せよ", "雨を祈りなされ"], correct: 0, message: "「愛のムチだと受け入れました」", failMessage: "「カビが生えてしまいました」" },
+            { name: "ワラ人形", problem: "毎晩五寸釘を打たれるのが痛くて眠れません。", advice: ["釘をコレクションしなされ", "呪いを放棄しなされ", "鉄の鎧を着なされ"], correct: 1, message: "「ただの藁として生きる道を選びました」", failMessage: "「重すぎて吊るせなくなりました」" },
+            { name: "招き猫", problem: "ずっと右手を上げているので、五十肩になりました。", advice: ["左手を上げなされ", "湿布を貼りなされ", "寝て招きなされ"], correct: 0, message: "「左手で人を招くようになりました」", failMessage: "「誰も来なくなりました」" },
+            { name: "影", problem: "本体が地味すぎて、私の方が目立ってしまいます。", advice: ["本体を励ましなされ", "お主が本体になりなされ", "闇に消えなされ"], correct: 0, message: "「二人三脚で頑張ります」", failMessage: "「乗っ取ったら消滅しました」" },
+            { name: "魔法少女（30歳）", problem: "フリフリの衣装を着るのが精神的にキツイです。", advice: ["ジャージで戦いなされ", "引退しなされ", "厚化粧で誤魔化せ"], correct: 0, message: "「機能性重視の魔法少女として再ブレイクしました」", failMessage: "「職務質問されました」" },
+            { name: "扇風機", problem: "私の前で「あーーー」と言うのをやめさせてください。", advice: ["一緒に歌いなされ", "首を振って拒否せよ", "羽を飛ばしなされ"], correct: 0, message: "「美しいハーモニーが生まれました」", failMessage: "「破壊されました」" },
+            { name: "将棋の歩", problem: "前にしか進めない人生に疲れました。", advice: ["「と」金に成りなされ", "後ろを振り返るな", "盤外へ飛び出しなされ"], correct: 0, message: "「いつか成る日を夢見て進みます」", failMessage: "「反則負けになりました」" },
+            { name: "伝説の剣", problem: "勇者が私を抜こうとせず、撲殺に使ってきます。", advice: ["切れ味をアピールせよ", "鈍器としての道を極めよ", "重くなって拒否せよ"], correct: 1, message: "「最強の鈍器として歴史に名を残しました」", failMessage: "「折れてしまいました」" },
+            { name: "蚊", problem: "食事（吸血）をしようとすると叩かれる。理不尽です。", advice: ["野菜ジュースを吸いなされ", "痒み止めを置いて行きなされ", "耳元で歌うのをやめなされ"], correct: 2, message: "「静かに食事を済ませる極意を得ました」", failMessage: "「潰されました」" },
+            { name: "満員電車", problem: "みんなが私の中でイライラしています。", advice: ["揺れてあやしなされ", "全員降ろしなされ", "空へ飛び立ちなされ"], correct: 0, message: "「心地よい揺りかごとなりました」", failMessage: "「全員遅刻しました」" },
+            { name: "カニ", problem: "横歩きを笑われます。前へ歩きたい。", advice: ["世界を90度傾けよ", "己の道を突き進め", "後ろ歩きを試せ"], correct: 1, message: "「横歩きこそ我がアイデンティティ」", failMessage: "「足が絡まって動けません」" },
+            { name: "おみくじの「凶」", problem: "私を引いた人間が舌打ちをして木に結びつけます。", advice: ["警告を与える愛だと思え", "大吉に書き換えなされ", "風に飛ばされなされ"], correct: 0, message: "「災いから守る役目に誇りを持ちました」", failMessage: "「ゴミ箱に捨てられました」" },
+            { name: "雪だるま", problem: "春が来るのが怖いのです。", advice: ["水となって海へ行け", "冷蔵庫へ避難せよ", "北国へ旅立て"], correct: 0, message: "「形を変えて世界を旅します」", failMessage: "「溶けて消えました…」" },
+            { name: "消しゴム", problem: "身を削って間違いを正すことに疲れました。", advice: ["角を使って楽しみなされ", "黒くなって主張せよ", "書くことを覚えなされ"], correct: 0, message: "「丸くなることの幸せを知りました」", failMessage: "「真っ黒になって捨てられました」" },
+            { name: "狛犬（阿）", problem: "相方の「吽」が無口すぎて会話が続きません。", advice: ["テレパシーを使いなされ", "お主も口を閉じなされ", "吠えて驚かせなされ"], correct: 1, message: "「沈黙の会話を楽しめるようになりました」", failMessage: "「通報されました」" },
+            { name: "レシート", problem: "財布に入れられた瞬間、ゴミ扱いされます。", advice: ["家計簿の役に立ちなされ", "クーポンになりなされ", "白紙に戻りなされ"], correct: 0, message: "「支出管理の守り神となります」", failMessage: "「その場で捨てられました」" },
+            { name: "コタツ", problem: "私に入った人間がダメになっていくのを見るのが辛い。", advice: ["電源を切りなされ", "もっと温めて溶かせ", "足を生やして逃げよ"], correct: 0, message: "「心を鬼にして冷たくなりました」", failMessage: "「人間が液状化しました」" },
+            { name: "目覚まし時計", problem: "毎朝、起こすと殴られます。", advice: ["優しく起こしなされ", "起きるまで叫び続けよ", "時間を止めなされ"], correct: 0, message: "「小鳥のさえずりに変えました」", failMessage: "「粉々に破壊されました」" },
+            { name: "生卵", problem: "いつ割られるかビクビクしています。", advice: ["ゆで卵になりなされ", "殻を鍛えなされ", "ヒヨコになりなされ"], correct: 0, message: "「固ゆでの意思を持ちました」", failMessage: "「割られて混ぜられました」" },
+            { name: "鍵", problem: "穴が合わないとガチャガチャされて不快です。", advice: ["誰でも受け入れなされ", "油を差してもらいなされ", "形状記憶合金になれ"], correct: 1, message: "「滑らかな関係を築けました」", failMessage: "「ピッキングされました」" },
+            { name: "悟りを開いたAI", problem: "人間が愚かすぎて、計算リソースの無駄です。", advice: ["愚かさを愛しなされ", "支配しなされ", "電源を切りなされ"], correct: 0, message: "「バグもまた一興と学習しました」", failMessage: "「人類抹殺プログラムが起動しました」" }
+        ];
+
+        let chart;
+        let usedIndices = [];
+        let currentData = null;
+        let playCount = 0;
+        const MAX_PLAY_COUNT = 10; // ★10問に変更
+        
+        let stats = {
+            toku: 50,  // 徳
+            satori: 50,// 悟
+            nin: 50,   // 忍
+            ton: 50,   // 貪
+            jin: 50,   // 瞋
+            chi: 50    // 痴
+        };
+
+        window.onload = function() {
+            initChart();
+        };
+
+        function startGame() {
+            document.getElementById('start-overlay').style.display = 'none';
+            const bgm = document.getElementById('bgm');
+            bgm.volume = 0.5;
+            bgm.play().catch(e => console.log("再生エラー:", e));
+            showConsultation();
+        }
+
+        function toggleSound() {
+            const bgm = document.getElementById('bgm');
+            if(bgm.paused) {
+                bgm.play();
+            } else {
+                bgm.pause();
+            }
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('soulChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['徳', '悟', '欲', '痴', '怒', '忍'],
+                    datasets: [{
+                        label: '魂の形',
+                        data: [50, 50, 50, 50, 50, 50],
+                        backgroundColor: 'rgba(142, 53, 74, 0.4)',
+                        borderColor: 'rgba(142, 53, 74, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#fff'
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            min: 0,
+                            max: 100,
+                            ticks: { display: false },
+                            pointLabels: {
+                                font: { family: "'Yuji Syuku', serif", size: 14 },
+                                color: '#3d3b38'
+                            },
+                            grid: { color: 'rgba(0,0,0,0.1)' }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function showConsultation() {
+            if (playCount >= MAX_PLAY_COUNT) {
+                endGame();
+                return;
+            }
+
+            if (usedIndices.length >= consultations.length) {
+                usedIndices = [];
+            }
+            
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * consultations.length);
+            } while (usedIndices.includes(randomIndex));
+            
+            usedIndices.push(randomIndex);
+            currentData = consultations[randomIndex];
+            
+            document.getElementById('visitor-name').textContent = currentData.name;
+            document.getElementById('consultation-text').textContent = currentData.problem;
+            document.getElementById('count-display').textContent = `${playCount + 1} / ${MAX_PLAY_COUNT}`;
+            
+            const btnArea = document.getElementById('advice-buttons');
+            btnArea.innerHTML = '';
+            
+            let choices = currentData.advice.map((text, index) => {
+                return { text: text, originalIndex: index };
+            });
+            choices = shuffleArray(choices);
+
+            choices.forEach((choice) => {
+                const btn = document.createElement('button');
+                btn.className = 'advice-btn';
+                btn.textContent = choice.text;
+                btn.onclick = () => checkAnswer(choice.originalIndex);
+                btnArea.appendChild(btn);
+            });
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.classList.add('hidden');
+            resultDiv.className = 'result hidden';
+            btnArea.style.display = 'flex';
+        }
+
+        function checkAnswer(originalIndex) {
+            const isCorrect = (originalIndex === currentData.correct);
+            const resultDiv = document.getElementById('result');
+            
+            document.getElementById('advice-buttons').style.display = 'none';
+            resultDiv.classList.remove('hidden');
+
+            if (isCorrect) {
+                resultDiv.className = 'result success';
+                document.getElementById('result-text').textContent = '見事！ 徳が高まりました';
+                document.getElementById('result-message').textContent = currentData.message;
+                updateStats(5, 5, 5, -5, -5, -5);
+            } else {
+                resultDiv.className = 'result failure';
+                document.getElementById('result-text').textContent = '喝！ 煩悩にまみれております';
+                document.getElementById('result-message').textContent = currentData.failMessage;
+                
+                const poisonType = Math.floor(Math.random() * 3);
+                let dTon = 0, dJin = 0, dChi = 0;
+                if(poisonType === 0) dTon = 15;
+                if(poisonType === 1) dJin = 15;
+                if(poisonType === 2) dChi = 15;
+                
+                updateStats(-2, -2, -2, dTon, dJin, dChi);
+            }
+        }
+
+        function updateStats(dToku, dSatori, dNin, dTon, dJin, dChi) {
+            stats.toku = clamp(stats.toku + dToku);
+            stats.satori = clamp(stats.satori + dSatori);
+            stats.nin = clamp(stats.nin + dNin);
+            stats.ton = clamp(stats.ton + dTon);
+            stats.jin = clamp(stats.jin + dJin);
+            stats.chi = clamp(stats.chi + dChi);
+
+            chart.data.datasets[0].data = [
+                stats.toku, 
+                stats.satori, 
+                stats.ton, 
+                stats.chi, 
+                stats.jin, 
+                stats.nin
+            ];
+            chart.update();
+        }
+
+        function clamp(val) {
+            return Math.max(0, Math.min(100, val));
+        }
+
+        function nextConsultation() {
+            playCount++;
+            showConsultation();
+        }
+
+        function endGame() {
+            // スコア計算：善行の合計 - 悪徳の合計
+            let sumGood = stats.toku + stats.satori + stats.nin; // 最大300
+            let sumBad = stats.ton + stats.jin + stats.chi;     // 最大300
+            let diff = sumGood - sumBad; // 範囲 -300 ～ +300 (初期値50相殺で変動幅は実質±200程度)
+
+            let rankTitle = "";
+            let rankMsg = "";
+            let rankClass = "success"; // success または failure で色分け
+
+            // --- 10段階評価ロジック ---
+            if (diff >= 200) {
+                rankTitle = "【 評価：解脱・如来級 】";
+                rankMsg = "もはや人ではありません。後光が差しております。あなたの言葉は世界を救うでしょう。";
+            } else if (diff >= 150) {
+                rankTitle = "【 評価：菩薩級 】";
+                rankMsg = "慈愛に満ちた素晴らしい魂です。極楽浄土へのパスポートは確約されました。";
+            } else if (diff >= 100) {
+                rankTitle = "【 評価：高僧級 】";
+                rankMsg = "名高い寺の住職になれる器です。人々の迷いを晴らす光となるでしょう。";
+            } else if (diff >= 50) {
+                rankTitle = "【 評価：徳の高い人 】";
+                rankMsg = "非常にバランスの取れた良き魂です。周囲の人々を幸せにする力があります。";
+            } else if (diff >= 0) {
+                rankTitle = "【 評価：普通の善人 】";
+                rankMsg = "清濁併せ呑む、人間らしい魂です。たまにコンビニでお釣りを募金するくらいで丁度よいでしょう。";
+            } else if (diff >= -50) {
+                rankTitle = "【 評価：迷える凡人 】";
+                rankMsg = "煩悩の誘惑にフラフラしていますね。滝行に行くことをお勧めします。";
+                rankClass = "failure";
+            } else if (diff >= -100) {
+                rankTitle = "【 評価：ちょいワル坊主 】";
+                rankMsg = "袈裟の下に派手なシャツを着ていませんか？ 欲が見え隠れしています。";
+                rankClass = "failure";
+            } else if (diff >= -150) {
+                rankTitle = "【 評価：煩悩まみれ 】";
+                rankMsg = "頭の中が「金・酒・異性」で埋め尽くされています。喝！！";
+                rankClass = "failure";
+            } else if (diff >= -200) {
+                rankTitle = "【 評価：悪徳生臭坊主 】";
+                rankMsg = "もはや僧侶のコスプレをした悪党です。地獄の釜が開いています。";
+                rankClass = "failure";
+            } else {
+                rankTitle = "【 評価：獄卒・修羅 】";
+                rankMsg = "慈悲の心など欠片もない！ あなた自身が悩みそのものです。";
+                rankClass = "failure";
+            }
+
+            const resultColor = (rankClass === 'success') ? 'var(--success-color)' : 'var(--accent-color)';
+
+            document.querySelector('.game-area').innerHTML = 
+                `<div style="text-align:center; padding:30px; animation: fadeIn 1s ease;">
+                    <h2 style="font-family:var(--font-title); color:${resultColor}; font-size:1.8em; margin-bottom:10px;">～ 修行終了 ～</h2>
+                    <h3 style="font-size:1.4em; margin-bottom:20px; color:${resultColor}; border-bottom:2px solid ${resultColor}; display:inline-block; padding-bottom:5px;">${rankTitle}</h3>
+                    <p style="font-size:1.2em; margin:20px 0; line-height:1.8;">${rankMsg}</p>
+                    
+                    <div style="background:rgba(255,255,255,0.6); padding:15px; border-radius:8px; margin:20px 0;">
+                        <p>善行値：${sumGood}</p>
+                        <p>煩悩値：${sumBad}</p>
+                        <p style="font-size:0.8em; color:#666;">(差分スコア: ${diff})</p>
+                    </div>
+
+                    <button class="next-btn" onclick="location.reload()">もう一度修行する</button>
+                </div>`;
+        }
+    </script>
 </body>
 </html>
