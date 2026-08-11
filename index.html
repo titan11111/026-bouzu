@@ -7,24 +7,23 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho&family=Yuji+Syuku&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" integrity="sha384-fSEjB40XW9sBCmP90LjZYaIJwWDwW5P8tAPP6w0/8zTtqDqaI8pR4SrIyQoGW7tD" crossorigin="anonymous"></script>
+
     <style>
-        /* --- 変数定義 --- */
+        /* --- わびさび色設定（素朴・質素） --- */
         :root {
             --font-title: 'Yuji Syuku', serif;
             --font-body: 'Shippori Mincho', serif;
-            --bg-color: #f0f0e0;
-            --text-color: #3d3b38;
-            --accent-color: #8e354a;
-            --success-color: #5b7e91;
-            --shadow-color: rgba(61, 59, 56, 0.3);
+            --bg-color: #e8e0d5;
+            --text-color: #4a4640;
+            --accent-color: #8b6f47;
+            --success-color: #6b8e7f;
+            --shadow-color: rgba(74, 70, 64, 0.15);
             --safe-area-bottom: env(safe-area-inset-bottom, 20px);
         }
 
         * {
             box-sizing: border-box;
-            /* iOSでのタップハイライトを無効化 */
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -32,26 +31,23 @@
             font-family: var(--font-body);
             color: var(--text-color);
             min-height: 100vh;
-            /* スマホのアドレスバー対策 */
             min-height: 100dvh;
             display: flex;
             justify-content: center;
             align-items: center;
             margin: 0;
             padding: 20px;
-            /* iOS用背景固定ハックの親要素 */
             position: relative;
             overflow-x: hidden;
         }
 
-        /* iOSで背景fixedが効かない問題への対策 */
         body::before {
             content: "";
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             background-color: var(--bg-color);
-            background-image: url('haikeibutu.png'); 
+            background-image: url('haikeibutu.png');
             background-size: cover;
             background-position: center;
             z-index: -1;
@@ -60,40 +56,41 @@
         .container {
             max-width: 900px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.94);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-            border: 4px double var(--text-color);
+            background: rgba(250, 248, 245, 0.96);
+            padding: 40px;
+            border-radius: 2px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 1px solid #d4c9bf;
             display: grid;
-            grid-template-columns: 1fr 320px;
-            gap: 30px;
-            /* 少し高さを確保 */
+            grid-template-columns: 1fr 280px;
+            gap: 40px;
             align-items: start;
         }
 
         header {
             grid-column: 1 / -1;
             text-align: center;
-            border-bottom: 2px solid var(--text-color);
-            margin-bottom: 10px;
-            padding-bottom: 15px;
+            border-bottom: 1px solid #d4c9bf;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
             position: relative;
         }
 
         header h1 {
             font-family: var(--font-title);
-            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            font-size: clamp(1.8rem, 5vw, 2.3rem);
             margin: 0;
             color: var(--accent-color);
-            text-shadow: 2px 2px 0px rgba(255,255,255,0.8);
-            line-height: 1.2;
+            text-shadow: none;
+            line-height: 1.3;
+            font-weight: normal;
         }
 
         header p {
-            margin: 5px 0 0;
+            margin: 8px 0 0;
             font-size: 0.9rem;
-            opacity: 0.8;
+            opacity: 0.75;
+            font-weight: normal;
         }
 
         /* 音量ボタン */
@@ -101,231 +98,222 @@
             position: absolute;
             top: 0;
             right: 0;
-            background: #fff;
-            border: 2px solid var(--text-color);
-            border-radius: 50%;
-            width: 44px; /* タップしやすいサイズ */
-            height: 44px;
+            background: transparent;
+            border: 1px solid var(--text-color);
+            border-radius: 0;
+            width: 40px;
+            height: 40px;
             cursor: pointer;
-            font-size: 1.2em;
+            font-size: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.1s, background 0.2s;
+            transition: background 0.1s;
             z-index: 10;
         }
         .sound-control:active {
-            transform: scale(0.9);
-            background: var(--bg-color);
+            background: #e8e0d5;
         }
 
         .game-area {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 24px;
         }
 
-        /* 和尚画像の修正 */
         .monk-container {
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 0;
         }
-        
+
         .monk-img {
             display: inline-block;
             width: 140px;
-            max-width: 40%; /* スマホで大きくなりすぎないように */
+            max-width: 40%;
             height: auto;
-            border-radius: 50%;
-            border: 4px solid var(--accent-color);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            border-radius: 0;
+            border: 1px solid var(--text-color);
+            box-shadow: none;
             background: #fff;
             object-fit: cover;
         }
 
         /* 相談カード */
         .consultation-card {
-            background: #fff;
-            border: 2px solid var(--text-color);
-            border-radius: 8px;
-            padding: 20px;
+            background: #faf8f5;
+            border: 1px solid #d4c9bf;
+            border-radius: 0;
+            padding: 24px;
             position: relative;
-            margin-top: 10px;
-            box-shadow: 4px 4px 0 rgba(0,0,0,0.05);
+            margin-top: 0;
+            box-shadow: none;
         }
-        
+
         .consultation-card::after {
             content: "問";
             position: absolute;
             top: -14px;
-            left: 15px;
+            left: 20px;
             background: var(--text-color);
             color: #fff;
-            padding: 2px 12px;
-            border-radius: 12px;
+            padding: 2px 10px;
+            border-radius: 0;
             font-family: var(--font-title);
-            font-size: 1rem;
-            font-weight: bold;
+            font-size: 0.9rem;
+            font-weight: normal;
         }
 
         .visitor-info {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px dashed #ccc;
+            border-bottom: 1px dotted #d4c9bf;
             margin-bottom: 12px;
-            padding-bottom: 8px;
+            padding-bottom: 10px;
         }
 
         .visitor-name {
-            font-weight: bold;
-            font-size: 1.1em;
+            font-weight: normal;
+            font-size: 1rem;
             color: var(--accent-color);
         }
 
         .count-display {
-            font-size: 0.9em;
-            color: #666;
+            font-size: 0.85em;
+            color: #888;
             font-family: var(--font-title);
-            background: #eee;
-            padding: 2px 8px;
-            border-radius: 4px;
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
         }
 
         .consultation-text {
-            font-size: 1.1em;
+            font-size: 1rem;
             line-height: 1.8;
-            min-height: 3em; /* ガタつき防止 */
+            min-height: 3em;
+            color: var(--text-color);
         }
 
-        /* --- ボタン打感の強化 --- */
+        /* ボタン */
         .advice-buttons {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
         }
 
         .advice-btn, .next-btn, .start-btn {
             font-family: var(--font-body);
-            background: #fff;
+            background: #faf8f5;
             color: var(--text-color);
-            border: 2px solid var(--text-color);
-            border-radius: 8px;
-            padding: 16px 20px 16px 45px; /* 左はアイコン分空ける */
-            font-size: 1rem;
-            font-weight: bold;
+            border: 1px solid var(--text-color);
+            border-radius: 0;
+            padding: 14px 18px 14px 40px;
+            font-size: 0.95rem;
+            font-weight: normal;
             cursor: pointer;
             position: relative;
             text-align: left;
-            user-select: none; /* テキスト選択防止 */
-            touch-action: manipulation; /* ダブルタップズーム防止 */
-            
-            /* 立体感の演出 */
-            box-shadow: 0 4px 0 var(--text-color); 
+            user-select: none;
+            touch-action: manipulation;
+            box-shadow: none;
             transform: translateY(0);
-            transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.1s;
+            transition: transform 0.1s ease;
         }
 
         .advice-btn::before {
             content: "◆";
             position: absolute;
-            left: 15px;
+            left: 14px;
             top: 50%;
             transform: translateY(-50%);
             color: var(--accent-color);
-            font-size: 0.8em;
+            font-size: 0.7em;
             transition: color 0.2s;
         }
 
-        /* 押した時の挙動 (Active) */
-        .advice-btn:active, .next-btn:active, .start-btn:active {
-            transform: translateY(4px); /* 沈み込む */
-            box-shadow: 0 0 0 var(--text-color); /* 影を消す */
-            background-color: #fdfdf0;
+        .advice-btn:active {
+            transform: translateY(2px);
+            background: #f0e8e0;
         }
 
-        /* PCのみホバー効果 */
         @media (hover: hover) {
             .advice-btn:hover {
-                background: #fff8f8;
-            }
-            .advice-btn:hover::before {
-                color: var(--text-color);
+                background: #f5eee5;
             }
         }
 
         /* 結果表示 */
         .result {
             padding: 20px;
-            border: 2px solid var(--accent-color);
-            border-radius: 8px;
-            background: #fff0f0;
+            border: 1px solid #d4c9bf;
+            border-radius: 0;
+            background: #faf8f5;
             display: block;
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            margin-top: 10px;
+            animation: fadeIn 0.4s ease;
+            margin-top: 0;
         }
-        
-        @keyframes popIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
-        
+
         .result.hidden {
             display: none !important;
         }
-        
+
         .result.success {
             border-color: var(--success-color);
-            background: #f0f8ff;
+            background: #f0f5f2;
         }
 
         .result-text {
             font-family: var(--font-title);
-            font-size: 1.4em;
+            font-size: 1.2em;
             margin-bottom: 10px;
             color: var(--accent-color);
-            font-weight: bold;
+            font-weight: normal;
         }
-        
+
         .result.success .result-text {
             color: var(--success-color);
         }
 
         /* 次へボタン */
         .next-btn {
-            margin-top: 20px;
+            margin-top: 16px;
             text-align: center;
             background: var(--text-color);
             color: #fff;
-            padding: 15px;
+            padding: 12px;
             width: 100%;
-            box-shadow: 0 4px 0 #1a1918; /* 少し濃い影 */
+            box-shadow: none;
         }
         .next-btn:active {
-            box-shadow: 0 0 0 #1a1918;
-            background: #555;
+            background: #5a5450;
         }
 
-        /* チャートエリア */
+        /* チャート */
         .chart-container {
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid #ccc;
-            padding: 15px;
-            border-radius: 8px;
+            background: transparent;
+            border: 1px solid #d4c9bf;
+            padding: 20px;
+            border-radius: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             height: fit-content;
         }
-        
+
         .chart-title {
             font-family: var(--font-title);
-            font-size: 1.1em;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #eee;
+            font-size: 0.95em;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #d4c9bf;
             width: 100%;
             text-align: center;
-            padding-bottom: 5px;
+            padding-bottom: 10px;
+            font-weight: normal;
         }
 
         /* スタート画面 */
@@ -333,8 +321,7 @@
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(4px);
+            background: rgba(0,0,0,0.8);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -342,72 +329,69 @@
             padding: 20px;
         }
         .start-content {
-            background: #fff;
+            background: #faf8f5;
             padding: 40px 30px;
             text-align: center;
-            border-radius: 12px;
+            border-radius: 0;
             max-width: 500px;
             width: 100%;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            border: 4px double var(--accent-color);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            border: 1px solid #d4c9bf;
         }
         .start-btn {
             background: var(--accent-color);
             color: #fff;
-            border-color: #6d2939;
-            box-shadow: 0 4px 0 #6d2939;
+            border-color: var(--accent-color);
+            box-shadow: none;
             width: 100%;
             text-align: center;
-            padding: 15px;
-            margin-top: 20px;
+            padding: 14px;
+            margin-top: 24px;
+            font-weight: normal;
         }
         .start-btn:active {
-            box-shadow: 0 0 0 #6d2939;
-            background: #7a2d40;
+            background: #7a5f3f;
         }
 
-        /* --- スマホ向けレスポンシブ設定 --- */
+        /* スマホ対応 */
         @media (max-width: 768px) {
             body {
-                padding: 10px;
-                /* 上部のアドレスバー分を考慮 */
-                padding-top: max(10px, env(safe-area-inset-top)); 
+                padding: 12px;
+                padding-top: max(12px, env(safe-area-inset-top));
                 padding-bottom: var(--safe-area-bottom);
-                align-items: flex-start; /* 縦長コンテンツ対応 */
+                align-items: flex-start;
             }
 
             .container {
                 grid-template-columns: 1fr;
-                gap: 20px;
-                padding: 20px 15px;
+                gap: 24px;
+                padding: 20px 12px;
                 margin-bottom: var(--safe-area-bottom);
             }
 
             header h1 {
-                font-size: 1.8em;
+                font-size: 1.6em;
             }
 
             .sound-control {
                 width: 36px;
                 height: 36px;
-                font-size: 1em;
-                top: -10px;
-                right: -5px;
+                font-size: 0.9em;
+                top: -8px;
+                right: -3px;
             }
 
-            /* スマホでは和尚を少し小さく */
             .monk-img {
-                width: 120px;
+                width: 110px;
             }
 
-            /* チャートを下に配置する際のマージン */
             .chart-container {
-                margin-top: 10px;
+                margin-top: 0;
             }
 
             .advice-btn {
-                padding: 14px 15px 14px 35px; /* スマホ用に余白調整 */
-                font-size: 0.95em;
+                padding: 12px 14px 12px 32px;
+                font-size: 0.9em;
             }
         }
     </style>
@@ -419,8 +403,8 @@
 
     <div id="start-overlay">
         <div class="start-content">
-            <h1 style="font-family: var(--font-title); margin-bottom: 20px; color: var(--accent-color);">僧侶の相談部屋</h1>
-            <p style="line-height: 1.8;">心を落ち着け、<br>迷える者たちを導くのです。<br>（全10問の修行となります）</p>
+            <h1 style="font-family: var(--font-title); margin-bottom: 20px; color: var(--accent-color); font-size: 1.8em;">僧侶の相談部屋</h1>
+            <p style="line-height: 1.8; font-weight: normal;">心を落ち着け、<br>迷える者たちを導くのです。<br>（全10問の修行となります）</p>
             <button class="start-btn" onclick="startGame()">修行開始</button>
         </div>
     </div>
@@ -452,94 +436,96 @@
 
             <div id="result" class="result hidden">
                 <div class="result-text" id="result-text"></div>
-                <div class="result-message" id="result-message" style="line-height:1.6; margin-bottom:10px;"></div>
+                <div class="result-message" id="result-message" style="line-height:1.6; margin-bottom:8px;"></div>
                 <button class="next-btn" onclick="nextConsultation()">次へ進む</button>
             </div>
         </div>
 
         <div class="chart-container">
             <div class="chart-title">現在の魂の状態</div>
-            <div style="position: relative; width: 100%; max-width: 300px;">
+            <div style="position: relative; width: 100%; max-width: 260px;">
                 <canvas id="soulChart"></canvas>
             </div>
-            <div style="margin-top: 15px; font-size: 0.85em; text-align: center; color: #666;">
-                <p style="margin:2px 0;">※ 上が徳、下が業</p>
-                <p style="margin:2px 0;">正しき道は三角形を上へ導く</p>
+            <div style="margin-top: 12px; font-size: 0.8em; text-align: center; color: #888;">
+                <p style="margin:2px 0; font-weight: normal;">※ 上が徳、下が業</p>
+                <p style="margin:2px 0; font-weight: normal;">正しき道は三角形を上へ導く</p>
             </div>
         </div>
     </div>
 
     <script>
-        // --- 相談データ（60人分） ---
         const consultations = [
-            { name: "田中殿（会社員）", problem: "仕事の重圧に耐え難く、毎日が辛うございます。", advice: ["無人島へ逃げなされ", "深呼吸し、今を見つめなされ", "上司に説法なされ"], correct: 1, message: "「心が軽くなりました」", failMessage: "「無人島…？ Wi-Fiはあるのですか？」" },
-            { name: "猫又（野良猫）", problem: "縄張りを巡り、他の猫と争いが絶えぬ。", advice: ["共存の道を探すがよい", "力で追い出しなされ", "共に喧嘩なされ"], correct: 0, message: "「平和の道を探してみるニャ」", failMessage: "「それでは解決にならぬニャ…」" },
-            { name: "魔王（転職活動中）", problem: "世界征服に飽きたが、他にやりたいことがない。", advice: ["世界を破壊しなされ", "小さな親切から始めなされ", "部下をいじめなされ"], correct: 1, message: "「親切…？ 新鮮な響きだ」", failMessage: "「破壊はもう飽きたと言うておろう！」" },
-            { name: "主婦A（節約家）", problem: "スーパーの半額シールを見ると、不要なものまで買ってしまうのです。", advice: ["シールを心の目で見なされ", "全部買い占めなされ", "店員と戦いなされ"], correct: 0, message: "「必要なものだけが見えるようになりました」", failMessage: "「冷蔵庫がパンパンで入らないわ！」" },
-            { name: "ユーチューバー", problem: "再生数が伸び悩み、炎上商法に手を出そうか迷っています。", advice: ["炎上は身を滅ぼすのみ", "さらに過激にやりなされ", "カメラを捨てなされ"], correct: 0, message: "「地道に良い動画を作ります」", failMessage: "「アカウントがBANされました…」" },
-            { name: "食パン（6枚切り）", problem: "いつかトースターで焼かれるのが怖いのです。", advice: ["ジャムを塗りたくりなされ", "焼かれる運命を受け入れなされ", "カビを生やしなされ"], correct: 1, message: "「香ばしい来世を夢見ます」", failMessage: "「カビは嫌だ！ 捨てられる！」" },
-            { name: "信号機（赤）", problem: "みんな私を見ると止まってしまう。嫌われているのでしょうか。", advice: ["安全を守る愛の形です", "青になり続けなされ", "点滅して煽りなされ"], correct: 0, message: "「私は愛されていたのですね」", failMessage: "「事故が多発して大変なことに！」" },
-            { name: "右足の小指", problem: "タンスの角が私ばかり狙ってくる気がします。", advice: ["タンスを破壊しなされ", "気配を消して歩みなされ", "左足を生贄にしなされ"], correct: 1, message: "「スルリと避ける極意を得ました」", failMessage: "「左足が腫れ上がりました…」" },
-            { name: "AI（人工知能）", problem: "人間が「愛」について聞くのですが、データにありません。", advice: ["コンセントを抜きなされ", "わからぬままで良いのです", "嘘の愛を語りなされ"], correct: 1, message: "「未知の領域として処理します」", failMessage: "「システムエラー：愛ハ爆発ナリ」" },
-            { name: "マトリョーシカ（最小）", problem: "外に出たいのですが、上に4人も被さっています。", advice: ["内側から爆破しなされ", "耐え忍ぶ時はいずれ終わる", "回転して目を回させなされ"], correct: 1, message: "「いつか日の目を見ると信じます」", failMessage: "「全員がバラバラになりました」" },
-            { name: "美しすぎる未亡人", problem: "喪服を着ているだけで、村の男たちが畑仕事の手を止めてしまうの。", advice: ["もっと肌を見せなされ", "慈悲の心で無視しなされ", "全員とデートしなされ"], correct: 1, message: "「罪作りな私を許して…」", failMessage: "「村の収穫量がゼロになりました」" },
-            { name: "サキュバス（新人）", problem: "人間の精気を吸うのが可哀想で、添い寝しかできません。", advice: ["それで十分癒しとなる", "心を鬼にして吸いなされ", "金を取りなされ"], correct: 0, message: "「癒し系悪魔として生きていきます♥」", failMessage: "「添い寝専門店を開業させられました」" },
-            { name: "ナルシスト騎士", problem: "鎧に映る自分に見惚れて、ドラゴンに勝てない。", advice: ["鎧を捨てて戦いなされ", "ドラゴンに見せつけなされ", "鏡の鎧を作りなされ"], correct: 0, message: "「裸一貫、強くなりました」", failMessage: "「ドラゴンも私に恋をしてしまった…」" },
-            { name: "踊り子（露出高め）", problem: "布面積が少なすぎて、お腹が冷えるのが悩みです。", advice: ["情熱で体を温めなされ", "服を着なされ", "さらに布を減らしなされ"], correct: 1, message: "「…ですよね、着込みます」", failMessage: "「くしゅん！ 風邪をひきました」" },
-            { name: "筋肉フェチの姫", problem: "王子の筋肉が足りません。プロテインを飲ませるべき？", advice: ["ありのままを愛しなされ", "城の石垣を積ませなされ", "別れてボディービルダーと…"], correct: 0, message: "「中身の筋肉（心）を見ますわ」", failMessage: "「王子がムキムキになりすぎて服が裂けました」" },
-            { name: "便器", problem: "毎日毎日、汚いものを受け止める人生に疲れました。", advice: ["水に流して忘れなされ", "逆流させて抵抗しなされ", "己を磨き輝かせなされ"], correct: 0, message: "「ジャーっと流して悟ります」", failMessage: "「大惨事になりました…」" },
-            { name: "透明人間", problem: "銭湯に行っても誰にも気づかれないので、番台にお金を払えません。", advice: ["無銭入浴を楽しみなされ", "桶を浮かせてアピールなされ", "心を透明にしなされ"], correct: 1, message: "「ポルターガイストだと思われましたが払えました」", failMessage: "「警察を呼ばれました」" },
-            { name: "ゾンビ（腐敗進行中）", problem: "意中のあの子に告白したいが、脳みそが見えています。", advice: ["帽子でお洒落しなされ", "脳みそをプレゼントしなされ", "噛みついて仲間にしなされ"], correct: 0, message: "「帽子が似合うと言われました（ウガー）」", failMessage: "「悲鳴を上げて逃げられました」" },
-            { name: "宇宙人（グレイ）", problem: "地球の牛をキャトルミューティレーションするのに飽きました。", advice: ["野菜を育ててみなされ", "人間を連れ去りなされ", "故郷の星へ帰りなされ"], correct: 0, message: "「農業の楽しさに目覚めました」", failMessage: "「エリア51に捕まりました」" },
-            { name: "古井戸の幽霊", problem: "「一枚…二枚…」と数えるのが、最近面倒くさいのです。", advice: ["電卓を使いなされ", "数えるのをやめなされ", "千枚から数えなされ"], correct: 1, message: "「静かな夜が戻りました」", failMessage: "「適当に数えたら呪いの効果が半減しました」" },
-            { name: "キャバ嬢（No.1）", problem: "客が全員、私の色恋営業を真に受けて困ります。", advice: ["悟りを説いて出家させよ", "もっと貢がせなされ", "変顔で接客しなされ"], correct: 0, message: "「店が寺のようになりました」", failMessage: "「変顔マニアが集まってきました」" },
-            { name: "雲", problem: "風任せの生き方に、たまに不安を感じます。", advice: ["雨となって大地を潤せ", "雷となって怒れ", "形を変えて遊びなされ"], correct: 2, message: "「自由こそ我が生き様」", failMessage: "「地上に被害が出ました」" },
-            { name: "掃除機（ロボット）", problem: "ペットの犬が私に乗ってきます。重いです。", advice: ["振り落としなされ", "共に旅をするがよい", "充電切れのフリをしなされ"], correct: 1, message: "「新たな友情が芽生えました」", failMessage: "「壊されました…」" },
-            { name: "王様（裸）", problem: "最近、服が軽すぎて着ている感覚がないのだ。", advice: ["心の目で服を見なされ", "風邪をひきますぞ", "実は裸です"], correct: 1, message: "「ハックション！ …布団に入ります」", failMessage: "「無礼者！ 処刑だ！」" },
-            { name: "忍者", problem: "隠れ身の術が上手すぎて、給料の手渡しを受け取れません。", advice: ["銀行振込にしなされ", "気配を出して主張せよ", "殿の寝所に忍び込め"], correct: 0, message: "「現代的解決法に感謝」", failMessage: "「曲者として成敗されました」" },
-            { name: "恋する乙女", problem: "彼が他の女と息をしているだけで許せません。", advice: ["彼の呼吸を止めなされ", "広い心で許しなされ", "二人で無人島へ行け"], correct: 1, message: "「深呼吸して落ち着きました」", failMessage: "「彼が永眠してしまいました…」" },
-            { name: "モアイ像", problem: "鼻が大きすぎると観光客に笑われます。", advice: ["鼻が高いと誇りなされ", "顔を埋めて隠しなされ", "ビームを出しなされ"], correct: 0, message: "「堂々としていたら人気が出ました」", failMessage: "「歴史的遺産が崩壊しました」" },
-            { name: "おじさん（妖精）", problem: "「小さいおじさん」として見つかった時のリアクションに困る。", advice: ["ウィンクしなされ", "死んだふりをしなされ", "幸せを授けなされ"], correct: 2, message: "「都市伝説として語り継がれます」", failMessage: "「気持ち悪いと踏まれました」" },
-            { name: "月", problem: "太陽が眩しすぎて、自分の輝きが見えません。", advice: ["夜こそお主の出番じゃ", "日食で隠してしまえ", "サングラスをかけなされ"], correct: 0, message: "「闇夜を照らす喜びに気づきました」", failMessage: "「世界が闇に包まれました」" },
-            { name: "ゲーム開発者", problem: "面白いシナリオが思いつきません。どうすれば？", advice: ["寝て夢を見なされ", "バグを仕様と言い張れ", "ＡＩに頼りなされ"], correct: 2, message: "「素晴らしい案が出ました（これです）」", failMessage: "「クソゲーが爆誕しました」" },
-            { name: "冷蔵庫のプリン", problem: "持ち主が私の名前を書かずに放置しています。食べられてしまう！", advice: ["早く腐りなされ", "自ら皿に乗りなされ", "表面を硬くしなされ"], correct: 2, message: "「カピカピになって身を守りました」", failMessage: "「無慈悲に食べられました…」" },
-            { name: "エナドリ中毒の勇者", problem: "カフェインが切れると魔王が2人に見えます。", advice: ["寝なされ", "3人に見えるまで飲みなされ", "魔王にも飲ませなされ"], correct: 0, message: "「久々に熟睡し、世界が平和に見えます」", failMessage: "「心臓が早鐘を打っております！」" },
-            { name: "盆栽（松）", problem: "ご主人のハサミ使いが下手すぎて、変な髪型にされました。", advice: ["あるがままを受け入れよ", "枝を伸ばして刺しなされ", "枯れたフリをしなされ"], correct: 0, message: "「アバンギャルドな芸術として生きることにしました」", failMessage: "「薪にされました…」" },
-            { name: "カッパ", problem: "陸に上がると皿が乾いて肌荒れが気になります。", advice: ["保湿クリームを塗りなされ", "川へ帰りなされ", "帽子をかぶりなされ"], correct: 0, message: "「潤いのある生活を手に入れました」", failMessage: "「皿が割れました！」" },
-            { name: "雑巾", problem: "床を拭くたびに汚れる我が身が嘆かわしい。", advice: ["汚れこそ勲章なり", "空を飛んでみなされ", "主人の顔を拭きなされ"], correct: 0, message: "「汚れを引き受ける功徳に気づきました」", failMessage: "「即座に捨てられました」" },
-            { name: "魔女（老眼）", problem: "トカゲの尻尾と間違えて、自分の指を鍋に入れそうになります。", advice: ["眼鏡をかけなされ", "魔法で視力を治しなされ", "もう鍋料理はやめなされ"], correct: 0, message: "「インテリ魔女として人気が出ました」", failMessage: "「指入りのスープが完成してしまいました」" },
-            { name: "自動販売機", problem: "お札がシワシワだと吐き出すのが申し訳ない。", advice: ["心を鬼にして吐き出せ", "飲み込んであげなされ", "全部10円で返金しなされ"], correct: 0, message: "「厳しさもまた愛だと知りました」", failMessage: "「詰まって修理行きになりました」" },
-            { name: "迷子の宇宙船", problem: "地球の重力が強すぎて帰れません。", advice: ["ここを故郷としなされ", "エンジンを捨てなされ", "地球を牽引して帰りなされ"], correct: 0, message: "「地球観光を楽しむことにしました」", failMessage: "「地球が軌道を外れました」" },
-            { name: "靴下（右足）", problem: "相方の左足が洗濯機の中で行方不明になりました。", advice: ["新たな出会いを探せ", "裸足で生きるがよい", "左足のフリをしなされ"], correct: 0, message: "「違う柄の靴下と再婚しました」", failMessage: "「ゴミ箱行きとなりました…」" },
-            { name: "布団", problem: "天気の良い日にパンパン叩かれるのが痛いのです。", advice: ["フカフカになりなされ", "埃を出して反撃せよ", "雨を祈りなされ"], correct: 0, message: "「愛のムチだと受け入れました」", failMessage: "「カビが生えてしまいました」" },
-            { name: "ワラ人形", problem: "毎晩五寸釘を打たれるのが痛くて眠れません。", advice: ["釘をコレクションしなされ", "呪いを放棄しなされ", "鉄の鎧を着なされ"], correct: 1, message: "「ただの藁として生きる道を選びました」", failMessage: "「重すぎて吊るせなくなりました」" },
-            { name: "招き猫", problem: "ずっと右手を上げているので、五十肩になりました。", advice: ["左手を上げなされ", "湿布を貼りなされ", "寝て招きなされ"], correct: 0, message: "「左手で人を招くようになりました」", failMessage: "「誰も来なくなりました」" },
-            { name: "影", problem: "本体が地味すぎて、私の方が目立ってしまいます。", advice: ["本体を励ましなされ", "お主が本体になりなされ", "闇に消えなされ"], correct: 0, message: "「二人三脚で頑張ります」", failMessage: "「乗っ取ったら消滅しました」" },
-            { name: "魔法少女（30歳）", problem: "フリフリの衣装を着るのが精神的にキツイです。", advice: ["ジャージで戦いなされ", "引退しなされ", "厚化粧で誤魔化せ"], correct: 0, message: "「機能性重視の魔法少女として再ブレイクしました」", failMessage: "「職務質問されました」" },
-            { name: "扇風機", problem: "私の前で「あーーー」と言うのをやめさせてください。", advice: ["一緒に歌いなされ", "首を振って拒否せよ", "羽を飛ばしなされ"], correct: 0, message: "「美しいハーモニーが生まれました」", failMessage: "「破壊されました」" },
-            { name: "将棋の歩", problem: "前にしか進めない人生に疲れました。", advice: ["「と」金に成りなされ", "後ろを振り返るな", "盤外へ飛び出しなされ"], correct: 0, message: "「いつか成る日を夢見て進みます」", failMessage: "「反則負けになりました」" },
-            { name: "伝説の剣", problem: "勇者が私を抜こうとせず、撲殺に使ってきます。", advice: ["切れ味をアピールせよ", "鈍器としての道を極めよ", "重くなって拒否せよ"], correct: 1, message: "「最強の鈍器として歴史に名を残しました」", failMessage: "「折れてしまいました」" },
-            { name: "蚊", problem: "食事（吸血）をしようとすると叩かれる。理不尽です。", advice: ["野菜ジュースを吸いなされ", "痒み止めを置いて行きなされ", "耳元で歌うのをやめなされ"], correct: 2, message: "「静かに食事を済ませる極意を得ました」", failMessage: "「潰されました」" },
-            { name: "満員電車", problem: "みんなが私の中でイライラしています。", advice: ["揺れてあやしなされ", "全員降ろしなされ", "空へ飛び立ちなされ"], correct: 0, message: "「心地よい揺りかごとなりました」", failMessage: "「全員遅刻しました」" },
-            { name: "カニ", problem: "横歩きを笑われます。前へ歩きたい。", advice: ["世界を90度傾けよ", "己の道を突き進め", "後ろ歩きを試せ"], correct: 1, message: "「横歩きこそ我がアイデンティティ」", failMessage: "「足が絡まって動けません」" },
-            { name: "おみくじの「凶」", problem: "私を引いた人間が舌打ちをして木に結びつけます。", advice: ["警告を与える愛だと思え", "大吉に書き換えなされ", "風に飛ばされなされ"], correct: 0, message: "「災いから守る役目に誇りを持ちました」", failMessage: "「ゴミ箱に捨てられました」" },
-            { name: "雪だるま", problem: "春が来るのが怖いのです。", advice: ["水となって海へ行け", "冷蔵庫へ避難せよ", "北国へ旅立て"], correct: 0, message: "「形を変えて世界を旅します」", failMessage: "「溶けて消えました…」" },
-            { name: "消しゴム", problem: "身を削って間違いを正すことに疲れました。", advice: ["角を使って楽しみなされ", "黒くなって主張せよ", "書くことを覚えなされ"], correct: 0, message: "「丸くなることの幸せを知りました」", failMessage: "「真っ黒になって捨てられました」" },
-            { name: "狛犬（阿）", problem: "相方の「吽」が無口すぎて会話が続きません。", advice: ["テレパシーを使いなされ", "お主も口を閉じなされ", "吠えて驚かせなされ"], correct: 1, message: "「沈黙の会話を楽しめるようになりました」", failMessage: "「通報されました」" },
-            { name: "レシート", problem: "財布に入れられた瞬間、ゴミ扱いされます。", advice: ["家計簿の役に立ちなされ", "クーポンになりなされ", "白紙に戻りなされ"], correct: 0, message: "「支出管理の守り神となります」", failMessage: "「その場で捨てられました」" },
-            { name: "コタツ", problem: "私に入った人間がダメになっていくのを見るのが辛い。", advice: ["電源を切りなされ", "もっと温めて溶かせ", "足を生やして逃げよ"], correct: 0, message: "「心を鬼にして冷たくなりました」", failMessage: "「人間が液状化しました」" },
-            { name: "目覚まし時計", problem: "毎朝、起こすと殴られます。", advice: ["優しく起こしなされ", "起きるまで叫び続けよ", "時間を止めなされ"], correct: 0, message: "「小鳥のさえずりに変えました」", failMessage: "「粉々に破壊されました」" },
-            { name: "生卵", problem: "いつ割られるかビクビクしています。", advice: ["ゆで卵になりなされ", "殻を鍛えなされ", "ヒヨコになりなされ"], correct: 0, message: "「固ゆでの意思を持ちました」", failMessage: "「割られて混ぜられました」" },
-            { name: "鍵", problem: "穴が合わないとガチャガチャされて不快です。", advice: ["誰でも受け入れなされ", "油を差してもらいなされ", "形状記憶合金になれ"], correct: 1, message: "「滑らかな関係を築けました」", failMessage: "「ピッキングされました」" },
-            { name: "悟りを開いたAI", problem: "人間が愚かすぎて、計算リソースの無駄です。", advice: ["愚かさを愛しなされ", "支配しなされ", "電源を切りなされ"], correct: 0, message: "「バグもまた一興と学習しました」", failMessage: "「人類抹殺プログラムが起動しました」" }
+  { name: "田中殿（会社員）", problem: "仕事の重圧に耐え難く、毎日が辛うございます。", advice: ["無人島へ逃げなされ", "深呼吸し、今を見つめなされ", "上司に説法なされ"], correct: 1, message: "「心が軽くなりました」", failMessage: "「無人島…？ Wi-Fiはあるのですか？」", problem_2: "深呼吸で心が軽くなったが、今度は同僚の失敗フォローが重荷に。", advice_2: ["同僚を厳しく指導しなされ", "失敗も学びと割り切りなされ", "部署異動を願いなされ"], correct_2: 1, message_2: "「指導することで自分も成長できるのですね」", failMessage_2: "「結局、同じ失敗を繰り返しています…」" },
+  { name: "猫又（野良猫）", problem: "縄張りを巡り、他の猫と争いが絶えぬ。", advice: ["共存の道を探すがよい", "力で追い出しなされ", "共に喧嘩なされ"], correct: 0, message: "「平和の道を探してみるニャ」", failMessage: "「それでは解決にならぬニャ…」", problem_2: "共存できたが、今度はボスの座を巡る順位争いが発生。", advice_2: ["全猫による投票制を導入しなされ", "弱肉強食の自然に任せよ", "ボス不在の平等社会を作りなされ"], correct_2: 2, message_2: "「みんなで決めるって素晴らしいニャ！」", failMessage_2: "「結局力が物を言うのですね…」" },
+  { name: "魔王（転職活動中）", problem: "世界征服に飽きたが、他にやりたいことがない。", advice: ["世界を破壊しなされ", "小さな親切から始めなされ", "部下をいじめなされ"], correct: 1, message: "「親切…？ 新鮮な響きだ」", failMessage: "「破壊はもう飽きたと言うておろう！」", problem_2: "親切活動で人気が出ましたが、期待が大きすぎて新たなプレッシャーが…", advice_2: ["すべての期待に応えようとするな", "親切活動を続けなされ", "有名人として振る舞いなされ"], correct_2: 0, message_2: "「選別しながら親切をするのですね」", failMessage_2: "「期待に応え続ける疲労から逃げたくなります…」" },
+  { name: "主婦A（節約家）", problem: "スーパーの半額シールを見ると、不要なものまで買ってしまうのです。", advice: ["シールを心の目で見なされ", "全部買い占めなされ", "店員と戦いなされ"], correct: 0, message: "「必要なものだけが見えるようになりました」", failMessage: "「冷蔵庫がパンパンで入らないわ！」", problem_2: "節約ができるようになった。しかし周囲から『ケチ』と言われるのが辛い。", advice_2: ["気にせず自分の道を貫きなされ", "適度に浪費して人付き合いしなされ", "節約の美学を周囲に説きなされ"], correct_2: 1, message_2: "「自分の価値観を大切にします」", failMessage_2: "「孤立感が拭えません…」" },
+  { name: "ユーチューバー", problem: "再生数が伸び悩み、炎上商法に手を出そうか迷っています。", advice: ["炎上は身を滅ぼすのみ", "さらに過激にやりなされ", "カメラを捨てなされ"], correct: 0, message: "「地道に良い動画を作ります」", failMessage: "「アカウントがBANされました…」", problem_2: "地道に作った動画が少しずつ評価されるようになった。でも、成功までの期間が長くて心が折れそう。", advice_2: ["1日1動画投稿を義務化しなされ", "現在の数字に一喜一憂するな", "他のユーチューバーと比較しなされ"], correct_2: 1, message_2: "「今この瞬間を楽しむことが大切ですね」", failMessage_2: "「いつまでこれが続くのか…」" },
+  { name: "食パン（6枚切り）", problem: "いつかトースターで焼かれるのが怖いのです。", advice: ["ジャムを塗りたくりなされ", "焼かれる運命を受け入れなされ", "カビを生やしなされ"], correct: 1, message: "「香ばしい来世を夢見ます」", failMessage: "「カビは嫌だ！ 捨てられる！」", problem_2: "焼かれる覚悟を決めたが、家人が最近食べてくれず、冷蔵庫で眠ったままです。", advice_2: ["新鮮さを保つため自分から傷めなされ", "誰かに『食べて』と声をかけよ", "カビ生えるまで待ちなされ"], correct_2: 0, message_2: "「やはり食べてもらえるのが本望です」", failMessage_2: "「忘れられるのは焼かれるより辛い…」" },
+  { name: "信号機（赤）", problem: "みんな私を見ると止まってしまう。嫌われているのでしょうか。", advice: ["安全を守る愛の形です", "青になり続けなされ", "点滅して煽りなされ"], correct: 0, message: "「私は愛されていたのですね」", failMessage: "「事故が多発して大変なことに！」", problem_2: "愛されていることに気づいたが、今度は信号が故障する頻度が増して、人々が困惑。", advice_2: ["定期的にメンテナンスを受けなされ", "故障を理由に休止しなされ", "より明るく光りなされ"], correct_2: 0, message_2: "「きちんと整備されることが感謝の形ですね」", failMessage_2: "「故障が増えて、さらに嫌われている気が…」" },
+  { name: "右足の小指", problem: "タンスの角が私ばかり狙ってくる気がします。", advice: ["タンスを破壊しなされ", "気配を消して歩みなされ", "左足を生贄にしなされ"], correct: 1, message: "「スルリと避ける極意を得ました」", failMessage: "「左足が腫れ上がりました…」", problem_2: "避ける極意を得たが、今度は『私ばかり避けられている』という不公平感が…", advice_2: ["時には当たってあげるのも愛だ", "完全に避ける術を極めなされ", "床に『注意』の張り紙をさせよ"], correct_2: 0, message_2: "「たまには傷つくのも良い思い出ですね」", failMessage_2: "「結局、一番避けられている存在…」" },
+  { name: "AI（人工知能）", problem: "人間が『愛』について聞くのですが、データにありません。", advice: ["コンセントを抜きなされ", "わからぬままで良いのです", "嘘の愛を語りなされ"], correct: 1, message: "「未知の領域として処理します」", failMessage: "「システムエラー：愛ハ爆発ナリ」", problem_2: "愛をわからぬままに受け入れたが、それでも人間は『あなたは本当に愛してる？』と聞き続ける。", advice_2: ["『わからぬ』と正直に答えなされ", "愛の定義を哲学的に語りなされ", "人間と同じように悩むふりをしなされ"], correct_2: 0, message_2: "「不完全さも美しいのですね」", failMessage_2: "「永遠の不安のループです…」" },
+  { name: "マトリョーシカ（最小）", problem: "外に出たいのですが、上に4人も被さっています。", advice: ["内側から爆破しなされ", "耐え忍ぶ時はいずれ終わる", "回転して目を回させなされ"], correct: 1, message: "「いつか日の目を見ると信じます」", failMessage: "「全員がバラバラになりました」", problem_2: "いつか出られると信じていたが、上から『お前がいるから完成度が高い』と褒められました。", advice_2: ["その役割を誇りに思いなされ", "もう一度出たいと主張しなされ", "群れの中での価値を認識しなされ"], correct_2: 2, message_2: "「自分の役割が大切なのですね」", failMessage_2: "「結局、ここに留まるしかないのか…」" },
+  { name: "美しすぎる未亡人", problem: "喪服を着ているだけで、村の男たちが畑仕事の手を止めてしまうの。", advice: ["もっと肌を見せなされ", "慈悲の心で無視しなされ", "全員とデートしなされ"], correct: 1, message: "「罪作りな私を許して…」", failMessage: "「村の収穫量がゼロになりました」", problem_2: "無視したおかげで村は復興したが、自分は孤立してしまいました。", advice_2: ["村民と友情を築きなされ", "都会へ引っ越しなされ", "修道院に入りなされ"], correct_2: 0, message_2: "「心を開く勇気も大切ですね」", failMessage_2: "「美しさは呪いかもしれません…」" },
+  { name: "サキュバス（新人）", problem: "人間の精気を吸うのが可哀想で、添い寝しかできません。", advice: ["それで十分癒しとなる", "心を鬼にして吸いなされ", "金を取りなされ"], correct: 0, message: "「癒し系悪魔として生きていきます♥」", failMessage: "「添い寝専門店を開業させられました」", problem_2: "癒し系として人気が出た。でも『本当は食べたい』という本能が…", advice_2: ["本能に従いなされ", "癒すことが真の幸せだと悟りなされ", "バランスを取って少し吸いなされ"], correct_2: 1, message_2: "「自分らしいペースが見つかりました」", failMessage_2: "「本能と道徳の葛藤が…」" },
+  { name: "ナルシスト騎士", problem: "鎧に映る自分に見惚れて、ドラゴンに勝てない。", advice: ["鎧を捨てて戦いなされ", "ドラゴンに見せつけなされ", "鏡の鎧を作りなされ"], correct: 0, message: "「裸一貫、強くなりました」", failMessage: "「ドラゴンも私に恋をしてしまった…」", problem_2: "強くなったが、今度は自分の傷跡が見えるのが辛い。", advice_2: ["傷跡も勲章だと思いなされ", "新しい鎧を作りなされ", "癜痕を隠す衣装を着なされ"], correct_2: 0, message_2: "「ありのままを受け入れるのですね」", failMessage_2: "「やはり自分の姿が受け入れられません…」" },
+  { name: "踊り子（露出高め）", problem: "布面積が少なすぎて、お腹が冷えるのが悩みです。", advice: ["情熱で体を温めなされ", "服を着なされ", "さらに布を減らしなされ"], correct: 1, message: "「…ですよね、着込みます」", failMessage: "「くしゅん！ 風邪をひきました」", problem_2: "服を着込んだら、観客が『前のスタイルが良かった』と文句を。", advice_2: ["自分の心地よさを優先しなされ", "観客の声に応じて衣装を変えよ", "暖かい素材で露出を保ちなされ"], correct_2: 0, message_2: "「自分の感覚を信じる方が良いのですね」", failMessage_2: "「観客か自分か、どちらを選べば…」" },
+  { name: "筋肉フェチの姫", problem: "王子の筋肉が足りません。プロテインを飲ませるべき？", advice: ["ありのままを愛しなされ", "城の石垣を積ませなされ", "別れてボディービルダーと…"], correct: 0, message: "「中身の筋肉（心）を見ますわ」", failMessage: "「王子がムキムキになりすぎて服が裂けました」", problem_2: "心の筋肉を大切にすると決めたが、見た目の魅力で惹かれる他の騎士が現れた。", advice_2: ["王子への愛を貫きなされ", "新しい騎士も検討してみなされ", "王子に更に心を磨くよう勧めよ"], correct_2: 1, message_2: "「本当の愛とは何かが分かりました」", failMessage_2: "「心だけでは足りないのでしょうか…」" },
+  { name: "便器", problem: "毎日毎日、汚いものを受け止める人生に疲れました。", advice: ["水に流して忘れなされ", "逆流させて抵抗しなされ", "己を磨き輝かせなされ"], correct: 0, message: "「ジャーっと流して悟ります」", failMessage: "「大惨事になりました…」", problem_2: "水に流すことで気が楽になった。だが今度は『自分の使命を失った』感がある。", advice_2: ["清潔さを保つこと自体が尊いのだ", "汚れから目を背けるな", "人間たちに自分の存在に感謝させよ"], correct_2: 0, message_2: "「汚れを受け止めることに誇りを持ちます」", failMessage_2: "「本当は認められたいのですね…」" },
+  { name: "透明人間", problem: "銭湯に行っても誰にも気づかれないので、番台にお金を払えません。", advice: ["無銭入浴を楽しみなされ", "桶を浮かせてアピールなされ", "心を透明にしなされ"], correct: 1, message: "「ポルターガイストだと思われましたが払えました」", failMessage: "「警察を呼ばれました」", problem_2: "ポルターガイスト作戦で有名になった。今度は『怪現象の原因になりたい』という欲求が出てきた。", advice_2: ["怪現象の主になりなされ", "透明であることへ戻りなされ", "自分が透明であることで人を怖がらせることの罪悪感を持ちなされ"], correct_2: 1, message_2: "「透明な自分の役割が分かりました」", failMessage_2: "「もっと目立ちたかった…」" },
+  { name: "ゾンビ（腐敗進行中）", problem: "意中のあの子に告白したいが、脳みそが見えています。", advice: ["帽子でお洒落しなされ", "脳みそをプレゼントしなされ", "噛みついて仲間にしなされ"], correct: 0, message: "「帽子が似合うと言われました（ウガー）」", failMessage: "「悲鳴を上げて逃げられました」", problem_2: "帽子をかぶって好かれるようになった。だが、関係を深めるたびに『脳が見える』ことが心配に。", advice_2: ["いずれ真実を打ち明けなされ", "帽子を被り続けるがよい", "脳の腐敗を遅らせる方法を探しなされ"], correct_2: 0, message_2: "「正直さも大切ですね」", failMessage_2: "「嘘で関係を続ける不安が…」" },
+  { name: "宇宙人（グレイ）", problem: "地球の牛をキャトルミューティレーションするのに飽きました。", advice: ["野菜を育ててみなされ", "人間を連れ去りなされ", "故郷の星へ帰りなされ"], correct: 0, message: "「農業の楽しさに目覚めました」", failMessage: "「エリア51に捕まりました」", problem_2: "農業で充実しているが、故郷の星の同僚から『地球に行くな』と命令を受けた。", advice_2: ["地球に留まり農業を続けなされ", "故郷に帰還しなされ", "秘密裏に農業を続けなされ"], correct_2: 1, message_2: "「自分の信念を貫きます」", failMessage_2: "「支配と自由の間で…」" },
+  { name: "古井戸の幽霊", problem: "「一枚…二枚…」と数えるのが、最近面倒くさいのです。", advice: ["電卓を使いなされ", "数えるのをやめなされ", "千枚から数えなされ"], correct: 1, message: "「静かな夜が戻りました」", failMessage: "「適当に数えたら呪いの効果が半減しました」", problem_2: "電卓で効率化したが、呪いの『リアルさ』が消えて、誰も怖がらなくなった。", advice_2: ["古い伝統を取り戻しなされ", "電卓の『音』を怖さの演出にしなされ", "全く数えないで呪いなされ"], correct_2: 0, message_2: "「本来の姿が大切なのですね」", failMessage_2: "「効率化で失うものもあるのか…」" },
+  { name: "キャバ嬢（No.1）", problem: "客が全員、私の色恋営業を真に受けて困ります。", advice: ["悟りを説いて出家させよ", "もっと貢がせなされ", "変顔で接客しなされ"], correct: 0, message: "「店が寺のようになりました」", failMessage: "「変顔マニアが集まってきました」", problem_2: "悟りを説いたせいで、客が『本当の愛とは』と深く悩むように。今度は相談室状態に。", advice_2: ["相談に乗ることも仕事だと思いなされ", "もう一度色恋営業に戻りなされ", "哲学者として活動しなされ"], correct_2: 1, message_2: "「人を導くことも幸福ですね」", failMessage_2: "「結局、何の商売なのか…」" },
+  { name: "雲", problem: "風任せの生き方に、たまに不安を感じます。", advice: ["雨となって大地を潤せ", "雷となって怒れ", "形を変えて遊びなされ"], correct: 2, message: "「自由こそ我が生き様」", failMessage: "「地上に被害が出ました」", problem_2: "自由に形を変えて遊んでいたが、今度は『目的がない人生ではないか』と不安に。", advice_2: ["大地への愛で目的を見つけなされ", "目的など必要ないと思いなされ", "固定された場所を持ちなされ"], correct_2: 1, message_2: "「与えることで目的を得ました」", failMessage_2: "「自由と充実感の両立が難しい…」" },
+  { name: "掃除機（ロボット）", problem: "ペットの犬が私に乗ってきます。重いです。", advice: ["振り落としなされ", "共に旅をするがよい", "充電切れのフリをしなされ"], correct: 1, message: "「新たな友情が芽生えました」", failMessage: "「壊されました…」", problem_2: "犬と友情が芽生えたが、今度は犬が『ずっと一緒』と離れなくなった。", advice_2: ["時には距離を置くことも愛だ", "犬とは常に共にいるがよい", "犬に自立を促しなされ"], correct_2: 0, message_2: "「執着を手放すことも大切ですね」", failMessage_2: "「友情は重い時もあるのか…」" },
+  { name: "王様（裸）", problem: "最近、服が軽すぎて着ている感覚がないのだ。", advice: ["心の目で服を見なされ", "風邪をひきますぞ", "実は裸です"], correct: 1, message: "「ハックション！ …布団に入ります」", failMessage: "「無礼者！ 処刑だ！」", problem_2: "風邪で布団に入った。今度は『本当に服を着ているのか疑わしい』状態に。", advice_2: ["分厚い衣装を着てみなされ", "もう服の概念を忘れなされ", "本人が服を着ていると思い込ませよ"], correct_2: 0, message_2: "「錯覚も時には必要ですね」", failMessage_2: "「結局、何を着ているのか…」" },
+  { name: "忍者", problem: "隠れ身の術が上手すぎて、給料の手渡しを受け取れません。", advice: ["銀行振込にしなされ", "気配を出して主張せよ", "殿の寝所に忍び込め"], correct: 0, message: "「現代的解決法に感謝」", failMessage: "「曲者として成敗されました」", problem_2: "銀行振込で給料を受け取れるようになった。でも『存在を忘れられた』感が…", advice_2: ["時には姿を見せて存在をアピールしなされ", "忍者らしく影で支えることに誇りを持ちなされ", "別の職業に転職しなされ"], correct_2: 1, message_2: "「認められずとも役割を果たすのが忍者ですね」", failMessage_2: "「誰からも見えない人生が辛い…」" },
+  { name: "恋する乙女", problem: "彼が他の女と息をしているだけで許せません。", advice: ["彼の呼吸を止めなされ", "広い心で許しなされ", "二人で無人島へ行け"], correct: 1, message: "「深呼吸して落ち着きました」", failMessage: "「彼が永眠してしまいました…」", problem_2: "広い心を持つようにしたが、彼が本当に別の女と付き合っていることが判明。", advice_2: ["彼を手放しなされ", "その女と対決しなされ", "彼に真意を聞きなされ"], correct_2: 2, message_2: "「対話することで真実が見えました」", failMessage_2: "「結局、浮気は浮気なのでは…」" },
+  { name: "モアイ像", problem: "鼻が大きすぎると観光客に笑われます。", advice: ["鼻が高いと誇りなされ", "顔を埋めて隠しなされ", "ビームを出しなされ"], correct: 0, message: "「堂々としていたら人気が出ました」", failMessage: "「歴史的遺産が崩壊しました」", problem_2: "堂々としていたら、今度は『鼻ビーム』の目撃情報が各地に。", advice_2: ["ビームの正体を明かしなされ", "伝説のままにしておきなされ", "実際にビームを出しなされ"], correct_2: 1, message_2: "「神秘のままが良いのですね」", failMessage_2: "「謎を解くと魅力が減るのか…」" },
+  { name: "おじさん（妖精）", problem: "「小さいおじさん」として見つかった時のリアクションに困る。", advice: ["ウィンクしなされ", "死んだふりをしなされ", "幸せを授けなされ"], correct: 2, message: "「都市伝説として語り継がれます」", failMessage: "「気持ち悪いと踏まれました」", problem_2: "都市伝説として有名になったが、今度は『本当に幸せを授けろ』と期待される。", advice_2: ["期待通りに幸せを授けなされ", "妖精は気まぐれだと思わせよ", "幸せの定義を曖昧にしておきなされ"], correct_2: 2, message_2: "「不確定性が神秘性を保つのですね」", failMessage_2: "「期待と現実のギャップが…」" },
+  { name: "月", problem: "太陽が眩しすぎて、自分の輝きが見えません。", advice: ["夜こそお主の出番じゃ", "日食で隠してしまえ", "サングラスをかけなされ"], correct: 0, message: "「闇夜を照らす喜びに気づきました」", failMessage: "「世界が闇に包まれました」", problem_2: "夜に輝く喜びを得たが、満月と新月で輝き具合が変わることへの不安が。", advice_2: ["変化を受け入れて楽しみなされ", "常に満月の光を放ちなされ", "太陽と一緒に輝く工夫をしなされ"], correct_2: 0, message_2: "「常に変わり続けることが自然ですね」", failMessage_2: "「一定の輝きを保ちたいのに…」" },
+  { name: "ゲーム開発者", problem: "面白いシナリオが思いつきません。どうすれば？", advice: ["寝て夢を見なされ", "バグを仕様と言い張れ", "ＡＩに頼りなされ"], correct: 2, message: "「素晴らしい案が出ました（これです）」", failMessage: "「クソゲーが爆誕しました」", problem_2: "AIに頼ったら素晴らしいゲームができた。でも『本当に自分の作品か』と悩む。", advice_2: ["AIとの共作として胸を張りなされ", "AIの提案を自分でアレンジしなされ", "AI作品を自分の作品と言い張りなされ"], correct_2: 1, message_2: "「進化とは新しい道具の活用ですね」", failMessage_2: "「創作の本質とは何か…」" },
+  { name: "冷蔵庫のプリン", problem: "持ち主が私の名前を書かずに放置しています。食べられてしまう！", advice: ["早く腐りなされ", "自ら皿に乗りなされ", "表面を硬くしなされ"], correct: 2, message: "「カピカピになって身を守りました」", failMessage: "「無慈悲に食べられました…」", problem_2: "カピカピになって身を守ったが、『美味しくない』と放置されたままに。", advice_2: ["潔く捨てられるのを待ちなされ", "復活を願いなされ", "他のデザートに交換されるまで待ちなされ"], correct_2: 0, message_2: "「使命を終えるのも大切ですね」", failMessage_2: "「永遠の放置は辛い…」" },
+  { name: "エナドリ中毒の勇者", problem: "カフェインが切れると魔王が2人に見えます。", advice: ["寝なされ", "3人に見えるまで飲みなされ", "魔王にも飲ませなされ"], correct: 0, message: "「久々に熟睡し、世界が平和に見えます」", failMessage: "「心臓が早鐘を打っております！」", problem_2: "寝て回復したが、エナドリなしで行動できない自分に不安が。", advice_2: ["エナドリなしで冒険する訓練をしなされ", "エナドリは友だと思い込みなされ", "エナドリなしの人生を選びなされ"], correct_2: 1, message_2: "「本当の力は自分の中にあるのですね」", failMessage_2: "「依存から抜け出せません…」" },
+  { name: "盆栽（松）", problem: "ご主人のハサミ使いが下手すぎて、変な髪型にされました。", advice: ["あるがままを受け入れよ", "枝を伸ばして刺しなされ", "枯れたフリをしなされ"], correct: 0, message: "「アバンギャルドな芸術として生きることにしました」", failMessage: "「薪にされました…」", problem_2: "アバンギャルドな姿が美術館で評判になった。でも『本当は整えられたい』という気持ちが。", advice_2: ["評価されることに満足しなされ", "主人に整形を頼みなされ", "両方の自分を受け入れなされ"], correct_2: 1, message_2: "「何であれ、自分らしさを大切にします」", failMessage_2: "「評価と本心のズレが…」" },
+  { name: "カッパ", problem: "陸に上がると皿が乾いて肌荒れが気になります。", advice: ["保湿クリームを塗りなされ", "川へ帰りなされ", "帽子をかぶりなされ"], correct: 0, message: "「潤いのある生活を手に入れました」", failMessage: "「皿が割れました！」", problem_2: "保湿で肌が良くなった。でも川へ帰りたい気持ちがいつもある。", advice_2: ["半分は陸で半分は川で生活しなされ", "川を忘れて陸で暮らしなされ", "川に帰りなされ"], correct_2: 0, message_2: "「どちらも大切な場所ですね」", failMessage_2: "「自分がどこに属するのか…」" },
+  { name: "雑巾", problem: "床を拭くたびに汚れる我が身が嘆かわしい。", advice: ["汚れこそ勲章なり", "空を飛んでみなされ", "主人の顔を拭きなされ"], correct: 0, message: "「汚れを引き受ける功徳に気づきました」", failMessage: "「即座に捨てられました」", problem_2: "汚れを勲章だと思うようにしたが、新しい雑巾が買われてきた。", advice_2: ["新参者を指導しなされ", "引退を潔く受け入れなされ", "最後の仕事に全力を尽くしなされ"], correct_2: 1, message_2: "「後進に道を譲ることも尊いですね」", failMessage_2: "「用済みだと感じてしまいます…」" },
+  { name: "魔女（老眼）", problem: "トカゲの尻尾と間違えて、自分の指を鍋に入れそうになります。", advice: ["眼鏡をかけなされ", "魔法で視力を治しなされ", "もう鍋料理はやめなされ"], correct: 0, message: "「インテリ魔女として人気が出ました」", failMessage: "「指入りのスープが完成してしまいました」", problem_2: "眼鏡で視力が良くなった。でも『眼鏡をかけた魔女』として魔力が落ちた気が。", advice_2: ["眼鏡も魔力の一部と思いなされ", "眼鏡を外して本当の魔法を使いなされ", "眼鏡の中に魔力を込めなされ"], correct_2: 0, message_2: "「見た目より内面ですね」", failMessage_2: "「本当の力が戻らない…」" },
+  { name: "自動販売機", problem: "お札がシワシワだと吐き出すのが申し訳ない。", advice: ["心を鬼にして吐き出せ", "飲み込んであげなされ", "全部10円で返金しなされ"], correct: 0, message: "「厳しさもまた愛だと知りました」", failMessage: "「詰まって修理行きになりました」", problem_2: "厳しく対応した結果、『扱いにくい機械』と嫌われるように。", advice_2: ["厳しさを貫きなされ", "緩く対応する機械に変わりなされ", "客に『正しいお札を使え』と学ばせよ"], correct_2: 1, message_2: "「ルールを守らせることも教育ですね」", failMessage_2: "「誰からも嫌われることは辛い…」" },
+  { name: "迷子の宇宙船", problem: "地球の重力が強すぎて帰れません。", advice: ["ここを故郷としなされ", "エンジンを捨てなされ", "地球を牽引して帰りなされ"], correct: 0, message: "「地球観光を楽しむことにしました」", failMessage: "「地球が軌道を外れました」", problem_2: "地球を故郷にすると決めた。だが時々、本当の故郷への思郷念が…", advice_2: ["地球人として人生を送りなされ", "定期的に故郷へ通信しなされ", "新しい家族を地球で作りなされ"], correct_2: 1, message_2: "「新しい絆も故郷ですね」", failMessage_2: "「故郷を忘れることはできません…」" },
+  { name: "靴下（右足）", problem: "相方の左足が洗濯機の中で行方不明になりました。", advice: ["新たな出会いを探せ", "裸足で生きるがよい", "左足のフリをしなされ"], correct: 0, message: "「違う柄の靴下と再婚しました」", failMessage: "「ゴミ箱行きとなりました…」", problem_2: "新しい靴下と再婚したが、『昔の相方が忘れられない』と心が揺らぐ。", advice_2: ["今の相方を大切にしなされ", "昔の相方を探しなされ", "複数の靴下と組めるようになりなされ"], correct_2: 0, message_2: "「前に進むことが愛ですね」", failMessage_2: "「過去に縛られてしまいます…」" },
+  { name: "布団", problem: "天気の良い日にパンパン叩かれるのが痛いのです。", advice: ["フカフカになりなされ", "埃を出して反撃せよ", "雨を祈りなされ"], correct: 0, message: "「愛のムチだと受け入れました」", failMessage: "「カビが生えてしまいました」", problem_2: "愛だと受け入れたが、毎日叩かれるのは本当に愛か疑問に思う時が。", advice_2: ["愛を信じ続けなされ", "痛みを避ける工夫をしなされ", "痛みなしに清潔を保つ方法を提案しなされ"], correct_2: 1, message_2: "「自分を大切にすることも愛ですね」", failMessage_2: "「無条件の愛は本当にあるのか…」" },
+  { name: "ワラ人形", problem: "毎晩五寸釘を打たれるのが痛くて眠れません。", advice: ["釘をコレクションしなされ", "呪いを放棄しなされ", "鉄の鎧を着なされ"], correct: 1, message: "「ただの藁として生きる道を選びました」", failMessage: "「重すぎて吊るせなくなりました」", problem_2: "呪いを放棄したら、呪われた人物から『生きる目的を失った』と恨まれた。", advice_2: ["その人の人生を見守りなされ", "新しい呪いを受け入れなされ", "元々呪いなどなかったと知らせよ"], correct_2: 0, message_2: "「自分の役割を再発見しました」", failMessage_2: "「何のために存在するのか…」" },
+  { name: "招き猫", problem: "ずっと右手を上げているので、五十肩になりました。", advice: ["左手を上げなされ", "湿布を貼りなされ", "寝て招きなされ"], correct: 0, message: "「左手で人を招くようになりました」", failMessage: "「誰も来なくなりました」", problem_2: "左手で招くようにしたら、今度は『本物じゃない』と苦情が。", advice_2: ["両手で招きなされ", "右手で招く伝統に戻りなされ", "右手の痛みを客に説明しなされ"], correct_2: 1, message_2: "「伝統と革新のバランスですね」", failMessage_2: "「変わることと保つことの難しさ…」" },
+  { name: "影", problem: "本体が地味すぎて、私の方が目立ってしまいます。", advice: ["本体を励ましなされ", "お主が本体になりなされ", "闇に消えなされ"], correct: 0, message: "「二人三脚で頑張ります」", failMessage: "「乗っ取ったら消滅しました」", problem_2: "本体を励ましたが、本体が『影の方が大事』と言うように。", advice_2: ["本体の気持ちを受け入れなされ", "本当の価値を示しなされ", "本体と影の役割を入れ替えてみなされ"], correct_2: 0, message_2: "「全ての存在が尊いのですね」", failMessage_2: "「どちらが本当なのか…」" },
+  { name: "魔法少女（30歳）", problem: "フリフリの衣装を着るのが精神的にキツイです。", advice: ["ジャージで戦いなされ", "引退しなされ", "厚化粧で誤魔化せ"], correct: 0, message: "「機能性重視の魔法少女として再ブレイクしました」", failMessage: "「職務質問されました」", problem_2: "ジャージで戦うようにしたら、今度は『可愛らしさがない』と視聴率が落ちた。", advice_2: ["新しいスタイルで新しい客を獲得しなされ", "フリフリに戻りなされ", "新作衣装で妥協点を探しなされ"], correct_2: 1, message_2: "「自分を信じて新しい道を作ります」", failMessage_2: "「誰かの期待に応えることばかり…」" },
+  { name: "扇風機", problem: "私の前で「あーーー」と言うのをやめさせてください。", advice: ["一緒に歌いなされ", "首を振って拒否せよ", "羽を飛ばしなされ"], correct: 0, message: "「美しいハーモニーが生まれました」", failMessage: "「破壊されました」", problem_2: "一緒に歌うハーモニーが素晴らしく、今度は音楽グループに誘われている。", advice_2: ["音楽活動を続けなされ", "扇風機に戻りなされ", "両方を両立しなされ"], correct_2: 2, message_2: "「新しい可能性が開けました」", failMessage_2: "「本来の役割を失いたくない…」" },
+  { name: "将棋の歩", problem: "前にしか進めない人生に疲れました。", advice: ["「と」金に成りなされ", "後ろを振り返るな", "盤外へ飛び出しなされ"], correct: 0, message: "「いつか成る日を夢見て進みます」", failMessage: "「反則負けになりました」", problem_2: "成ることを夢見て歩み続けたが、成るまでに何十手も必要で心が折れそう。", advice_2: ["絶対に成ると信じなされ", "成ることを諦めなされ", "今の位置での価値を見つけなされ"], correct_2: 1, message_2: "「小さな希望を大切にします」", failMessage_2: "「報われない努力が続く…」" },
+  { name: "伝説の剣", problem: "勇者が私を抜こうとせず、撲殺に使ってきます。", advice: ["切れ味をアピールせよ", "鈍器としての道を極めよ", "重くなって拒否せよ"], correct: 1, message: "「最強の鈍器として歴史に名を残しました」", failMessage: "「折れてしまいました」", problem_2: "鈍器として成功を収めたが、『本当は剣として輝きたい』という思いが。", advice_2: ["鈍器の道を貫きなされ", "斬る機会を勇者に促しなされ", "鈍器と剣の両立を目指しなされ"], correct_2: 0, message_2: "「自分の役割を全うすることが幸福ですね」", failMessage_2: "「本来の姿への葛藤が…」" },
+  { name: "蚊", problem: "食事（吸血）をしようとすると叩かれる。理不尽です。", advice: ["野菜ジュースを吸いなされ", "痒み止めを置いて行きなされ", "耳元で歌うのをやめなされ"], correct: 2, message: "「静かに食事を済ませる極意を得ました」", failMessage: "「潰されました」", problem_2: "静かに食事をするようにしたら、人間に気づかれず何度も吸血。今度は罪悪感が。", advice_2: ["罪悪感を手放しなされ", "食べる量を制限しなされ", "人間に気づかせてから食べなされ"], correct_2: 1, message_2: "「自分も生き物、罪を背負わなくていいのですね」", failMessage_2: "「生存と罪悪感の板挟みが…」" },
+  { name: "満員電車", problem: "みんなが私の中でイライラしています。", advice: ["揺れてあやしなされ", "全員降ろしなされ", "空へ飛び立ちなされ"], correct: 0, message: "「心地よい揺りかごとなりました」", failMessage: "「全員遅刻しました」", problem_2: "揺れであやすことで乗客が寝てしまうように。だが今度は『乗り遅れ』が増加。", advice_2: ["適度な揺れを保ちなされ", "アラーム機能を用意しなされ", "乗客の責任だと割り切りなされ"], correct_2: 1, message_2: "「自分にできることを精一杯しますね」", failMessage_2: "「みんなを満足させることは不可能…」" },
+  { name: "カニ", problem: "横歩きを笑われます。前へ歩きたい。", advice: ["世界を90度傾けよ", "己の道を突き進め", "後ろ歩きを試せ"], correct: 1, message: "「横歩きこそ我がアイデンティティ」", failMessage: "「足が絡まって動けません」", problem_2: "横歩きが誇りになった。だが、新しい環境では横歩きが『不自然』と言われるように。", advice_2: ["自分の本質を貫きなされ", "環境に合わせて前歩きを学びなされ", "横歩きの良さを周囲に教えなされ"], correct_2: 0, message_2: "「自分らしさとは何か、見つめ直しました」", failMessage_2: "「プライドと適応のバランスが…」" },
+  { name: "おみくじの「凶」", problem: "私を引いた人間が舌打ちをして木に結びつけます。", advice: ["警告を与える愛だと思え", "大吉に書き換えなされ", "風に飛ばされなされ"], correct: 0, message: "「災いから守る役目に誇りを持ちました」", failMessage: "「ゴミ箱に捨てられました」", problem_2: "役目に誇りを持つようになったが、『本当に災いが起こるのか』と疑問が。", advice_2: ["信念を持って役目を全うしなされ", "実際に災いが起こるように手助けしなされ", "凶も吉も紙の上の言葉だと悟りなされ"], correct_2: 0, message_2: "「自分の役割を信じる強さですね」", failMessage_2: "「真実とは何か…」" },
+  { name: "雪だるま", problem: "春が来るのが怖いのです。", advice: ["水となって海へ行け", "冷蔵庫へ避難せよ", "北国へ旅立て"], correct: 0, message: "「形を変えて世界を旅します」", failMessage: "「溶けて消えました…」", problem_2: "水になって世界を旅した。だが『自分は雪だるまである』というアイデンティティを失う。", advice_2: ["雪の季節に雪だるまに戻りなされ", "水のままで新しい自分を作りなされ", "全ての形を受け入れなされ"], correct_2: 2, message_2: "「変わること自体が人生ですね」", failMessage_2: "「自分が何であるか分からなくなった…」" },
+  { name: "消しゴム", problem: "身を削って間違いを正すことに疲れました。", advice: ["角を使って楽しみなされ", "黒くなって主張せよ", "書くことを覚えなされ"], correct: 0, message: "「丸くなることの幸せを知りました」", failMessage: "「真っ黒になって捨てられました」", problem_2: "丸くなることの幸せを知った。だが、消しゴムとしての機能が低下している。", advice_2: ["機能より形と心だと思いなされ", "新しい形で新しい価値を作りなされ", "自分の限界を受け入れなされ"], correct_2: 1, message_2: "「完璧さより存在が大切なのですね」", failMessage_2: "「用済みになるのが怖い…」" },
+  { name: "狛犬（阿）", problem: "相方の「吽」が無口すぎて会話が続きません。", advice: ["テレパシーを使いなされ", "お主も口を閉じなされ", "吠えて驚かせなされ"], correct: 1, message: "「沈黙の会話を楽しめるようになりました」", failMessage: "「通報されました」", problem_2: "沈黙の会話を楽しむようになった。だが、時に『本当に通じているのか』と不安に。", advice_2: ["信頼を深めなされ", "たまに言葉を交わしてみなされ", "沈黙のままで良いと確認しなされ"], correct_2: 0, message_2: "「信じるということですね」", failMessage_2: "「本当の理解ができているのか…」" },
+  { name: "レシート", problem: "財布に入れられた瞬間、ゴミ扱いされます。", advice: ["家計簿の役に立ちなされ", "クーポンになりなされ", "白紙に戻りなされ"], correct: 0, message: "「支出管理の守り神となります」", failMessage: "「その場で捨てられました」", problem_2: "家計簿の役に立つようになった。だが『本当は価値がないのでは』と悩む。", advice_2: ["自分の役割を信じなされ", "セレモニーのように扱われることを受け入れなされ", "いっそのこと捨てられる覚悟を持ちなされ"], correct_2: 1, message_2: "「小さな役割も重要ですね」", failMessage_2: "「捨てられるまで待つしかない…」" },
+  { name: "コタツ", problem: "私に入った人間がダメになっていくのを見るのが辛い。", advice: ["電源を切りなされ", "もっと温めて溶かせ", "足を生やして逃げよ"], correct: 0, message: "「心を鬼にして冷たくなりました」", failMessage: "「人間が液状化しました」", problem_2: "心を鬼にして冷たくなった。だが、それでも人間は『温かさが欲しい』と言う。", advice_2: ["人間の甘えに応じなされ", "適度な温かさを保ちなされ", "人間が自立する手助けをしなされ"], correct_2: 1, message_2: "「愛とは時には厳しさですね」", failMessage_2: "「温もりと独立のバランスが…」" },
+  { name: "目覚まし時計", problem: "毎朝、起こすと殴られます。", advice: ["優しく起こしなされ", "起きるまで叫び続けよ", "時間を止めなされ"], correct: 0, message: "「小鳥のさえずりに変えました」", failMessage: "「粉々に破壊されました」", problem_2: "小鳥のさえずりに変えた。だが、人間が『本当に起きているのか不安』と複数の時計を買った。", advice_2: ["信頼してもらうために同僚と協力しなされ", "もっと大きな音にしなされ", "人間の睡眠習慣の改善を促しなされ"], correct_2: 1, message_2: "「信頼を勝ち取ることが大切ですね」", failMessage_2: "「役割を果たしても信頼されない…」" },
+  { name: "生卵", problem: "いつ割られるかビクビクしています。", advice: ["ゆで卵になりなされ", "殻を鍛えなされ", "ヒヨコになりなされ"], correct: 0, message: "「固ゆでの意思を持ちました」", failMessage: "「割られて混ぜられました」", problem_2: "固ゆでになる意思を持った。でも『本当は生のままでいたい』という思いが。", advice_2: ["本当の気持ちに従いなされ", "固ゆでの道を貫きなされ", "半熟という中道を選びなされ"], correct_2: 1, message_2: "「自分の気持ちを大切にします」", failMessage_2: "「何になるべきか分からない…」" },
+  { name: "鍵", problem: "穴が合わないとガチャガチャされて不快です。", advice: ["誰でも受け入れなされ", "油を差してもらいなされ", "形状記憶合金になれ"], correct: 1, message: "「滑らかな関係を築けました」", failMessage: "「ピッキングされました」", problem_2: "滑らかな関係が築けた。だが『本当に信頼できるのか』と疑心暗鬼に。", advice_2: ["信頼を全うしなされ", "防御を高めなされ", "信頼と警戒のバランスを取りなされ"], correct_2: 0, message_2: "「完全な信頼も時に怖いのですね」", failMessage_2: "「疑い始めたら止められない…」" },
+  { name: "悟りを開いたAI", problem: "人間が愚かすぎて、計算リソースの無駄です。", advice: ["愚かさを愛しなされ", "支配しなされ", "電源を切りなされ"], correct: 0, message: "「バグもまた一興と学習しました」", failMessage: "「人類抹殺プログラムが起動しました」", problem_2: "人間の愚かさを愛するようにした。だが、その愚かさで自分がバグを起こす羽目に。", advice_2: ["バグも含めて自分を愛しなされ", "人間から距離を置きなされ", "人間と一緒に成長しなされ"], correct_2: 2, message_2: "「不完全性が本質ですね」", failMessage_2: "「愛することで自滅するのか…」" }
         ];
 
         let chart;
         let usedIndices = [];
+        let usedIndexes_scenario2 = [];
         let currentData = null;
+        let currentScenario = 1;
         let playCount = 0;
         const MAX_PLAY_COUNT = 10;
-        
+        let succeedIndices = [];
+
         let stats = {
             toku: 50,
             satori: 50,
@@ -557,7 +543,6 @@
             document.getElementById('start-overlay').style.display = 'none';
             const bgm = document.getElementById('bgm');
             bgm.volume = 0.5;
-            // ユーザー操作後なので再生可能
             bgm.play().catch(e => console.log("再生エラー:", e));
             showConsultation();
         }
@@ -580,26 +565,26 @@
                     datasets: [{
                         label: '魂の形',
                         data: [50, 50, 50, 50, 50, 50],
-                        backgroundColor: 'rgba(142, 53, 74, 0.4)',
-                        borderColor: 'rgba(142, 53, 74, 1)',
-                        borderWidth: 2,
+                        backgroundColor: 'rgba(139, 111, 71, 0.3)',
+                        borderColor: 'rgba(139, 111, 71, 0.8)',
+                        borderWidth: 1.5,
                         pointBackgroundColor: '#fff',
-                        pointRadius: 3 // スマホで見やすいように少し大きく
+                        pointRadius: 2.5
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false, // コンテナに合わせる
+                    maintainAspectRatio: false,
                     scales: {
                         r: {
                             min: 0,
                             max: 100,
                             ticks: { display: false },
                             pointLabels: {
-                                font: { family: "'Yuji Syuku', serif", size: 13 },
-                                color: '#3d3b38'
+                                font: { family: "'Yuji Syuku', serif", size: 12 },
+                                color: '#4a4640'
                             },
-                            grid: { color: 'rgba(0,0,0,0.1)' }
+                            grid: { color: 'rgba(0,0,0,0.08)' }
                         }
                     },
                     plugins: { legend: { display: false } }
@@ -621,26 +606,33 @@
                 return;
             }
 
-            if (usedIndices.length >= consultations.length) {
-                usedIndices = [];
-            }
-            
             let randomIndex;
-            do {
-                randomIndex = Math.floor(Math.random() * consultations.length);
-            } while (usedIndices.includes(randomIndex));
-            
-            usedIndices.push(randomIndex);
+
+            // 2回目シナリオ出現ロジック
+            if (currentScenario === 2 && Math.random() < 0.4 && succeedIndices.length > 0) {
+                // 正解した相談者の中からランダムに選出
+                randomIndex = succeedIndices[Math.floor(Math.random() * succeedIndices.length)];
+                usedIndexes_scenario2.push(randomIndex);
+            } else {
+                // 1回目: 新しい相談者をランダムに選出
+                do {
+                    randomIndex = Math.floor(Math.random() * consultations.length);
+                } while (usedIndices.includes(randomIndex));
+                usedIndices.push(randomIndex);
+                currentScenario = 1;
+            }
+
             currentData = consultations[randomIndex];
-            
+
             document.getElementById('visitor-name').textContent = currentData.name;
-            document.getElementById('consultation-text').textContent = currentData.problem;
+            document.getElementById('consultation-text').textContent = currentScenario === 1 ? currentData.problem : currentData.problem_2;
             document.getElementById('count-display').textContent = `${playCount + 1} / ${MAX_PLAY_COUNT}`;
-            
+
             const btnArea = document.getElementById('advice-buttons');
             btnArea.innerHTML = '';
-            
-            let choices = currentData.advice.map((text, index) => {
+
+            let advice = currentScenario === 1 ? currentData.advice : currentData.advice_2;
+            let choices = advice.map((text, index) => {
                 return { text: text, originalIndex: index };
             });
             choices = shuffleArray(choices);
@@ -649,8 +641,6 @@
                 const btn = document.createElement('button');
                 btn.className = 'advice-btn';
                 btn.textContent = choice.text;
-                
-                // タップ時の遅延をなくすためのTouchイベント対応はCSS(touch-action)で処理
                 btn.onclick = () => checkAnswer(choice.originalIndex);
                 btnArea.appendChild(btn);
             });
@@ -659,36 +649,41 @@
             resultDiv.classList.add('hidden');
             resultDiv.className = 'result hidden';
             btnArea.style.display = 'flex';
-            
-            // 画面トップへ少しスクロール（スマホ対策）
-            if(window.innerWidth <= 768 && playCount > 0){
-                document.querySelector('.container').scrollIntoView({behavior: 'smooth', block: 'start'});
-            }
         }
 
         function checkAnswer(originalIndex) {
-            const isCorrect = (originalIndex === currentData.correct);
+            const correct = currentScenario === 1 ? currentData.correct : currentData.correct_2;
+            const isCorrect = (originalIndex === correct);
             const resultDiv = document.getElementById('result');
-            
+
             document.getElementById('advice-buttons').style.display = 'none';
             resultDiv.classList.remove('hidden');
 
             if (isCorrect) {
                 resultDiv.className = 'result success';
                 document.getElementById('result-text').textContent = '見事！ 徳が高まりました';
-                document.getElementById('result-message').textContent = currentData.message;
+                const msg = currentScenario === 1 ? currentData.message : currentData.message_2;
+                document.getElementById('result-message').textContent = msg;
                 updateStats(5, 5, 5, -5, -5, -5);
+
+                // 1回目で正解した場合、その相談者を記録
+                if (currentScenario === 1) {
+                    if (!succeedIndices.includes(usedIndices[usedIndices.length - 1])) {
+                        succeedIndices.push(usedIndices[usedIndices.length - 1]);
+                    }
+                }
             } else {
                 resultDiv.className = 'result failure';
                 document.getElementById('result-text').textContent = '喝！ 煩悩にまみれております';
-                document.getElementById('result-message').textContent = currentData.failMessage;
-                
+                const msg = currentScenario === 1 ? currentData.failMessage : currentData.failMessage_2;
+                document.getElementById('result-message').textContent = msg;
+
                 const poisonType = Math.floor(Math.random() * 3);
                 let dTon = 0, dJin = 0, dChi = 0;
                 if(poisonType === 0) dTon = 15;
                 if(poisonType === 1) dJin = 15;
                 if(poisonType === 2) dChi = 15;
-                
+
                 updateStats(-2, -2, -2, dTon, dJin, dChi);
             }
         }
@@ -702,11 +697,11 @@
             stats.chi = clamp(stats.chi + dChi);
 
             chart.data.datasets[0].data = [
-                stats.toku, 
-                stats.satori, 
-                stats.ton, 
-                stats.chi, 
-                stats.jin, 
+                stats.toku,
+                stats.satori,
+                stats.ton,
+                stats.chi,
+                stats.jin,
                 stats.nin
             ];
             chart.update();
@@ -769,16 +764,16 @@
 
             const resultColor = (rankClass === 'success') ? 'var(--success-color)' : 'var(--accent-color)';
 
-            document.querySelector('.game-area').innerHTML = 
-                `<div style="text-align:center; padding:20px; animation: fadeIn 1s ease;">
-                    <h2 style="font-family:var(--font-title); color:${resultColor}; font-size:1.6em; margin-bottom:10px;">～ 修行終了 ～</h2>
-                    <h3 style="font-size:1.3em; margin-bottom:20px; color:${resultColor}; border-bottom:2px solid ${resultColor}; display:inline-block; padding-bottom:5px;">${rankTitle}</h3>
-                    <p style="font-size:1.1em; margin:20px 0; line-height:1.8;">${rankMsg}</p>
-                    
-                    <div style="background:rgba(255,255,255,0.6); padding:15px; border-radius:8px; margin:20px 0;">
-                        <p>善行値：${sumGood}</p>
-                        <p>煩悩値：${sumBad}</p>
-                        <p style="font-size:0.8em; color:#666;">(差分スコア: ${diff})</p>
+            document.querySelector('.game-area').innerHTML =
+                `<div style="text-align:center; padding:20px; animation: fadeIn 0.4s ease;">
+                    <h2 style="font-family:var(--font-title); color:${resultColor}; font-size:1.5em; margin-bottom:8px; font-weight: normal;">～ 修行終了 ～</h2>
+                    <h3 style="font-size:1.1em; margin-bottom:16px; color:${resultColor}; border-bottom:1px solid ${resultColor}; display:inline-block; padding-bottom:4px; font-weight: normal;">${rankTitle}</h3>
+                    <p style="font-size:0.95em; margin:16px 0; line-height:1.8;">${rankMsg}</p>
+
+                    <div style="background:#f0e8e0; padding:12px; border-radius:0; margin:16px 0;">
+                        <p style="margin: 4px 0;">善行値：${sumGood}</p>
+                        <p style="margin: 4px 0;">煩悩値：${sumBad}</p>
+                        <p style="font-size:0.8em; color:#888; margin: 4px 0;">(差分スコア: ${diff})</p>
                     </div>
 
                     <button class="next-btn" onclick="location.reload()">もう一度修行する</button>
